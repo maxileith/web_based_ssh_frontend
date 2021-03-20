@@ -73,21 +73,25 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
           value={"Warte auf Antwort ..."}
         />
         <Grid container style={{ width: '100%' }}>
-          <Grid item xs={4}>
+          <Grid item style={{flexGrow: 1}}>
             <TextField
               fullWidth
               InputProps={{
-                className: classes.prompt,
+                classes: {
+                  disabled: classes.prompt
+                }
               }}
-              value={'niklas@pop-os:~$ '}
+              size="small"
+              value={'niklas@pop-os:~$ asdfasdfasdfasdfs'}
+              disabled
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item style={{flexGrow: 0}}>
             <TextField
               autoFocus
               fullWidth
               InputProps={{
-                className: classes.input,
+                className: classes.input
               }}
               placeholder="Enter Command"
             />

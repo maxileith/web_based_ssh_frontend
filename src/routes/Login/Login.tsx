@@ -1,6 +1,8 @@
 import { Avatar, Button, CssBaseline, Grid, makeStyles, Paper, TextField, Typography } from '@material-ui/core';
 import React, { ChangeEvent, FormEvent, useState } from 'react';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import API from '../../Api';
+import { toast } from 'react-toastify';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -54,8 +56,7 @@ export default function Login({ setAuth }: ISetAuth) {
     e.preventDefault();
     console.log(inputs);
 
-    {/* 
-      const body = { username, password };
+    const body = { username, password };
 
     API.post('auth/login', body)
       .then((res) => {
@@ -70,13 +71,12 @@ export default function Login({ setAuth }: ISetAuth) {
         setAuth(false);
         if (err.response) {
           if (err.response.status === 401) {
-            toast.error(err.response.data);
+            toast.error('Username or password wrong');
           }
         } else {
           console.error(err.message);
         }
       });
-    */}
   }
 
   return (
