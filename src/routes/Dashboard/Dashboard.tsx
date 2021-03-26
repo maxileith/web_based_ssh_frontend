@@ -3,6 +3,7 @@ import React, { Fragment } from 'react';
 import { useHistory } from 'react-router';
 import Headbar from '../../components/Headbar/Headbar';
 import ServerCard from '../../components/ServerCard/ServerCard';
+import AddServer from '../../components/AddServer/AddServer';
 
 const useStyles = makeStyles((theme) => ({
   fullHeight: {
@@ -89,7 +90,7 @@ export default function Dashboard({ setAuth }: ISetAuth) {
           }
           <Grid item xs={12} sm={6} md={4} key={123}>
             <Card>
-              <CardActionArea>
+              <CardActionArea onClick={() => history.push(`/client/234`)}>
                 <CardContent>
                   <Typography gutterBottom variant="h5" component="h2">
                     Servername
@@ -113,6 +114,7 @@ export default function Dashboard({ setAuth }: ISetAuth) {
             <ServerCard server={server} />
           ))}
         </Grid>
+        <AddServer />
       </Container>
     </Fragment>
   )

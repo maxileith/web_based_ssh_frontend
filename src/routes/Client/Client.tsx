@@ -1,4 +1,4 @@
-import { Card, CardContent, Container, Grid, makeStyles, Typography, TextField } from '@material-ui/core';
+import { Card, CardContent, Container, Grid, makeStyles, Typography, TextField, CssBaseline, Box } from '@material-ui/core';
 import React, { Fragment, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import Headbar from '../../components/Headbar/Headbar';
@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme) => ({
   console: {
     background: 'black',
     color: 'white',
-    marginTop: theme.spacing(2),
   },
   input: {
     background: 'black',
@@ -16,6 +15,8 @@ const useStyles = makeStyles((theme) => ({
   prompt: {
     background: 'black',
     color: theme.palette.primary.main,
+    height: '100%',
+    width: '100%',
   }
 }))
 
@@ -62,31 +63,44 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
             </Card>
           </Grid>
         </Grid>
-        <TextField
-          fullWidth
-          multiline
-          InputProps={{
-            className: classes.console,
-          }}
-          rows={10}
-          rowsMax={50}
-          value={"Warte auf Antwort ..."}
-        />
-        <Grid container style={{ width: '100%' }}>
-          <Grid item style={{flexGrow: 1}}>
+        <Grid container justify="flex-start" alignItems="stretch" style={{ width: '100%', marginTop:'16px' }}>
+          <Grid item xs={12}>
             <TextField
               fullWidth
+              multiline
+              disabled
               InputProps={{
                 classes: {
-                  disabled: classes.prompt
+                  disabled: classes.console
                 }
               }}
-              size="small"
-              value={'niklas@pop-os:~$ asdfasdfasdfasdfs'}
-              disabled
+              rows={10}
+              rowsMax={50}
+              value={"Warte auf Antwort ..."}
             />
           </Grid>
-          <Grid item style={{flexGrow: 0}}>
+          <Box
+            component={Grid}
+            display={{ xs: 'none', sm: 'block' }}
+          >
+            <div className={classes.prompt}>
+              <Typography style={{ padding: '4px' }}>
+                niklas@pop-os:~$
+              </Typography>
+            </div>
+          </Box>
+          <Box
+            component={Grid}
+            display={{ xs: 'block', sm: 'none' }}
+            style={{ width: '100%' }}
+          >
+            <div className={classes.prompt}>
+              <Typography style={{ padding: '4px' }}>
+                niklas@pop-os:~$
+              </Typography>
+            </div>
+          </Box>
+          <Grid item style={{ flexGrow: 1 }}>
             <TextField
               autoFocus
               fullWidth
