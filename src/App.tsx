@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Register from './routes/Register/Register';
 import API from './Api';
+import Verify from './routes/Verify/Verify';
 
 const theme = createMuiTheme({
   palette: {
@@ -57,6 +58,7 @@ function App() {
             <Route exact path="/login" render={props => !isAuthenticated ? <Login {...props} setAuth={setAuth} /> : <Redirect to="/" /> } />
             <Route exact path="/register" render={props => !isAuthenticated ? <Register {...props} setAuth={setAuth} /> : <Redirect to="/" /> } /> 
             <Route path="/client/:id" render={props => isAuthenticated ? <Client {...props} setAuth={setAuth} /> : <Redirect to="/login" />} />
+            <Route path="/verify/:token" render={props => !isAuthenticated ? <Verify {...props} setAuth={setAuth} /> : <Redirect to="/" />} />
           </Switch>
         </Router>
       </ThemeProvider>
