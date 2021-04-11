@@ -1,11 +1,14 @@
 import React from "react";
 import { Terminal } from "xterm";
+import { FitAddon } from "xterm-addon-fit";
+import "../../components/Terminal/terminal.css";
 
 interface IProps {}
 
 export default class Term extends React.Component<IProps, {}> {
     term_dom: React.RefObject<HTMLDivElement>;
     term: Terminal;
+    fitAddon: FitAddon;
     ws!: WebSocket;
 
     constructor(props: IProps) {
@@ -15,6 +18,7 @@ export default class Term extends React.Component<IProps, {}> {
 
         this.term_dom = React.createRef();
         this.term = new Terminal();
+        this.fitAddon = new FitAddon();
         this.term.onData(this.onData);
         console.log(this.ws);
     }
@@ -23,8 +27,12 @@ export default class Term extends React.Component<IProps, {}> {
         this.ws = new WebSocket(
             "ws://" + window.location.hostname + ":8000/ws/ssh/"
         );
+        this.term.loadAddon(this.fitAddon);
         console.log("2");
-        if (this.term_dom.current) this.term.open(this.term_dom.current);
+        if (this.term_dom.current) {
+            this.term.open(this.term_dom.current);
+            this.fitAddon.fit();
+        }
 
         this.ws.onmessage = (e: MessageEvent<any>) => {
             const data = JSON.parse(e.data);

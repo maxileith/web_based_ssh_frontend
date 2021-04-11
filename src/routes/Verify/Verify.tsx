@@ -49,7 +49,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
   if (loading) {
     return (
       <>
-        <Headbar />
+        <Headbar setAuth={setAuth} />
         <Container>
           <LoadingIndicator />
         </Container>
@@ -58,7 +58,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
   } else if (sucess) {
     return (
       <>
-        <Headbar />
+        <Headbar setAuth={setAuth} />
         <Container>
           <Grid container direction="column" alignItems="center" justify="center" alignContent="center">
             <Grid item>
@@ -86,7 +86,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
   } else {
     return (
       <>
-        <Headbar />
+        <Headbar setAuth={setAuth} />
         <Container>
           <Grid container direction="column" alignItems="center" justify="center" alignContent="center">
             <Grid item>

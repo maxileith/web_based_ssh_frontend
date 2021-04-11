@@ -1,8 +1,21 @@
-import { AppBar, CssBaseline, Toolbar, Typography, useScrollTrigger } from '@material-ui/core';
+import { AppBar, createStyles, CssBaseline, makeStyles, Theme, Toolbar, Typography, useScrollTrigger } from '@material-ui/core';
 import React from 'react';
+import UserMenu from '../UserMenu/UserMenu';
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    title: {
+      flexGrow: 1,
+    },
+  }));
 
 interface Props {
   children: React.ReactElement;
+  setAuth(bool: boolean): void;
+}
+
+interface ISetAuth {
+  setAuth(bool: boolean): void;
 }
 
 function ElevationScroll(props: Props) {
@@ -18,23 +31,25 @@ function ElevationScroll(props: Props) {
 }
 
 function HeadbarWithChildren(props: Props) {
+  const classes = useStyles();
   return (
     <>
       <CssBaseline />
       <ElevationScroll {...props}>
         <AppBar>
           <Toolbar>
-            <Typography variant="h6">Web Based SSH</Typography>
+            <Typography variant="h6" className={classes.title}>Web Based SSH</Typography>
+            <UserMenu setAuth={props.setAuth} />
           </Toolbar>
         </AppBar>
       </ElevationScroll>
-      <Toolbar style={{marginBottom: '16px'}} />
+      <Toolbar style={{ marginBottom: '16px' }} />
     </>
   )
 }
 
-export default function Headbar() {
+export default function Headbar({ setAuth }: ISetAuth) {
   return (
-    <HeadbarWithChildren children={<></>} />
+    <HeadbarWithChildren children={<></>} setAuth={setAuth} />
   )
 }

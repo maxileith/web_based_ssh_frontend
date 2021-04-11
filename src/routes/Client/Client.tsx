@@ -49,7 +49,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
 
     return (
         <Fragment>
-            <Headbar />
+            <Headbar setAuth={setAuth} />
             <Container>
                 <h1>Client Nr. {match.params.id} </h1>
                 <Grid
@@ -58,6 +58,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     alignItems="stretch"
                     direction="row"
                     justify="center"
+                    style={{ marginBottom: '16px' }}
                 >
                     <Grid item xs={12} sm={6}>
                         <Card style={{ height: "100%" }}>
@@ -81,15 +82,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                         </Card>
                     </Grid>
                 </Grid>
-                <Grid
-                    container
-                    justify="flex-start"
-                    alignItems="stretch"
-                    style={{ width: "100%", marginTop: "16px" }}
-                >
-                    <Grid item>
-                        <Term />;
-                    </Grid>
+                <Term />
                     {/*
                         <Grid item xs={12}>
                             <TextField
@@ -134,8 +127,8 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                                 placeholder="Enter Command"
                             />
                         </Grid>
-                    */}
-                </Grid>
+                    
+                </Grid>*/}
             </Container>
         </Fragment>
     );
