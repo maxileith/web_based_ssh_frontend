@@ -19,7 +19,7 @@ export default class Term extends React.Component<IProps, {}> {
         this.fitAddon = new FitAddon();
 
         this.term.onData(this.onData);
-        this.term.onResize(this.onResize);
+        // this.term.onResize(this.onResize);
     }
 
     componentDidMount() {
