@@ -1,10 +1,9 @@
-import { Button, Checkbox, Container, FormControl, FormControlLabel, FormLabel, makeStyles, Radio, RadioGroup, TextField, Typography } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { Button, Container, makeStyles, TextField } from "@material-ui/core";
+import React, { ChangeEvent, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import API from '../../Api';
 import Headbar from "../../components/Headbar/Headbar";
-import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
 
 const useStyles = makeStyles((theme) => ({
   submit: {
@@ -26,8 +25,6 @@ const Register = ({ setAuth }: IRegister) => {
     password: "",
   });
 
-  const [loading, setLoading] = useState(true);
-  const [showLoadingError, setShowLoadingError] = useState(false);
   const history = useHistory();
   const classes = useStyles();
 

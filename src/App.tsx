@@ -1,7 +1,7 @@
 import { createMuiTheme, ThemeProvider } from '@material-ui/core';
 import { blue, red } from '@material-ui/core/colors';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Switch, Route, Redirect, matchPath } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import LoadingIndicator from './components/LoadingIndicator/LoadingIndicator';
 import Login from './routes/Login/Login';
 import Dashboard from './routes/Dashboard/Dashboard';
