@@ -14,21 +14,20 @@ export default class Term extends React.Component<IProps, {}> {
     constructor(props: IProps) {
         super(props);
 
-        console.log("1");
-
         this.term_dom = React.createRef();
         this.term = new Terminal();
         this.fitAddon = new FitAddon();
+
         this.term.onData(this.onData);
-        console.log(this.ws);
+        this.term.onResize(this.onResize);
     }
 
     componentDidMount() {
         this.ws = new WebSocket(
             "ws://" + window.location.hostname + ":8000/ws/ssh/"
         );
+
         this.term.loadAddon(this.fitAddon);
-        console.log("2");
         if (this.term_dom.current) {
             this.term.open(this.term_dom.current);
             this.fitAddon.fit();
@@ -38,18 +37,26 @@ export default class Term extends React.Component<IProps, {}> {
             const data = JSON.parse(e.data);
             if (data) this.term.write(data.data);
         };
+
+        this.ws.onclose = () => {
+            this.term.write("returning to dashboard ...");
+        };
     }
 
     componentWillUnmount() {
-        console.log("3");
         this.term.dispose();
         this.ws.close();
     }
 
     onData = (data: string) => {
         const json = JSON.stringify({ data: data });
-        console.log(json);
         this.ws.send(json);
+    };
+
+    onResize = (event: { cols: number; rows: number }) => {
+        const json = JSON.stringify({ resize: [event.cols, event.rows] });
+        console.log(json);
+        if (this.ws) this.ws.send(json);
     };
 
     render(): JSX.Element {

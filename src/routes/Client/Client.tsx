@@ -58,7 +58,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     alignItems="stretch"
                     direction="row"
                     justify="center"
-                    style={{ marginBottom: '16px' }}
+                    style={{ marginBottom: "16px" }}
                 >
                     <Grid item xs={12} sm={6}>
                         <Card style={{ height: "100%" }}>
@@ -83,52 +83,6 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     </Grid>
                 </Grid>
                 <Term />
-                    {/*
-                        <Grid item xs={12}>
-                            <TextField
-                                fullWidth
-                                multiline
-                                disabled
-                                InputProps={{
-                                    classes: {
-                                        disabled: classes.console,
-                                    },
-                                }}
-                                rows={10}
-                                rowsMax={50}
-                                value={"Warte auf Antwort ..."}
-                            />
-                        </Grid>
-                        <Box component={Grid} display={{ xs: "none", sm: "block" }}>
-                            <div className={classes.prompt}>
-                                <Typography style={{ padding: "4px" }}>
-                                    niklas@pop-os:~$
-                                </Typography>
-                            </div>
-                        </Box>
-                        <Box
-                            component={Grid}
-                            display={{ xs: "block", sm: "none" }}
-                            style={{ width: "100%" }}
-                        >
-                            <div className={classes.prompt}>
-                                <Typography style={{ padding: "4px" }}>
-                                    niklas@pop-os:~$
-                                </Typography>
-                            </div>
-                        </Box>
-                        <Grid item style={{ flexGrow: 1 }}>
-                            <TextField
-                                autoFocus
-                                fullWidth
-                                InputProps={{
-                                    className: classes.input,
-                                }}
-                                placeholder="Enter Command"
-                            />
-                        </Grid>
-                    
-                </Grid>*/}
             </Container>
         </Fragment>
     );
