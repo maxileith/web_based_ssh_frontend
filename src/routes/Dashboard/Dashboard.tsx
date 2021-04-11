@@ -38,7 +38,7 @@ export default function Dashboard({ setAuth }: ISetAuth) {
 
   return (
     <Fragment>
-      <Headbar />
+      <Headbar setAuth={setAuth} />
       <Container>
         <Grid container spacing={2} alignItems="stretch" direction="row" justify="center">
           <Grid item xs={12}>

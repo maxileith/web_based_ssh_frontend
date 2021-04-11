@@ -62,7 +62,7 @@ const Register = ({ setAuth }: IRegister) => {
 
   return (
     <>
-      <Headbar />
+      <Headbar setAuth={setAuth} />
       <Container>
         <Fragment>
           <h1>Register</h1>

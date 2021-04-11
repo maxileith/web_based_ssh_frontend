@@ -49,7 +49,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
 
     return (
         <Fragment>
-            <Headbar />
+            <Headbar setAuth={setAuth} />
             <Container>
                 <h1>Client Nr. {match.params.id} </h1>
                 <Grid
