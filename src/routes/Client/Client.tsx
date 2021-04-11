@@ -12,7 +12,7 @@ import {
 import React, { Fragment, useEffect } from "react";
 import { toast } from "react-toastify";
 import Headbar from "../../components/Headbar/Headbar";
-import XTerm from "./Terminal";
+import Term from "./Term";
 
 const useStyles = makeStyles((theme) => ({
     console: {
@@ -88,7 +88,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     style={{ width: "100%", marginTop: "16px" }}
                 >
                     <Grid item>
-                        <XTerm />
+                        <Term />;
                     </Grid>
                     {/*
                         <Grid item xs={12}>
