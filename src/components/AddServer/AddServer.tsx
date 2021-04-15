@@ -11,9 +11,8 @@ import {
     makeStyles,
     TextField,
     Tooltip,
-    Typography,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
@@ -27,6 +26,9 @@ const useStyles = makeStyles((theme) => ({
         left: "auto",
         position: "fixed",
     },
+    dialogText: {
+        marginBottom: '0px',
+    },
 }));
 
 const AddServer = () => {
@@ -38,9 +40,10 @@ const AddServer = () => {
         password: "",
         provider: "",
         note: "",
+        servername: "",
     });
 
-    const { host, user, password, provider, note } = inputs;
+    const { host, user, password, provider, note, servername } = inputs;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -63,13 +66,14 @@ const AddServer = () => {
             password: "",
             provider: "",
             note: "",
+            servername: "",
         });
         setOpen(false);
     };
 
     const addServer = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const body = { host, user, password, provider, note };
+        const body = { host, user, password, provider, note, servername };
 
         API.post("servers/add", body)
             .then((res) => {
@@ -104,7 +108,7 @@ const AddServer = () => {
                         Server hinzufügen
                     </DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
+                        <DialogContentText className={classes.dialogText} >
                             Cooler Text über Server und Zeug
                         </DialogContentText>
                         <Grid
@@ -152,10 +156,32 @@ const AddServer = () => {
                                 />
                             </Grid>
                         </Grid>
+                        <DialogContentText className={classes.dialogText} style={{marginTop: '24px'}}>
+                            Geben Sie ihrem Server einen Namen, um ihn besser zu identifizieren!
+                            </DialogContentText>
+                        <Grid
+                            container
+                            direction="row"
+                            justify="center"
+                            alignItems="flex-start"
+                        >
+                            <Grid item xs={12}>
+                                <TextField
+                                    autoFocus
+                                    margin="dense"
+                                    id="servername"
+                                    label="Servername"
+                                    type="text"
+                                    onChange={(e) => onChange(e)}
+                                    value={servername}
+                                    fullWidth
+                                />
+                            </Grid>
+                        </Grid>
                     </DialogContent>
                     <DialogTitle>Details</DialogTitle>
                     <DialogContent>
-                        <DialogContentText>
+                        <DialogContentText className={classes.dialogText}>
                             Weitere Details zum Server
                         </DialogContentText>
                         <Grid

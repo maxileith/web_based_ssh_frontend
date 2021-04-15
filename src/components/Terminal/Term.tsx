@@ -1,7 +1,7 @@
 import React from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
-import "../../components/Terminal/terminal.css";
+import "./terminal.css";
 
 interface IProps {}
 

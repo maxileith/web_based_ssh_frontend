@@ -1,9 +1,10 @@
-import { Card, CardActionArea, CardContent, Container, Grid, makeStyles, Typography } from '@material-ui/core';
-import React, { Fragment } from 'react';
+import { Card, CardActionArea, CardContent, Container, Grid, IconButton, makeStyles, Typography } from '@material-ui/core';
+import React, { Fragment, useState } from 'react';
 import { useHistory } from 'react-router';
 import Headbar from '../../components/Headbar/Headbar';
 import ServerCard from '../../components/ServerCard/ServerCard';
 import AddServer from '../../components/AddServer/AddServer';
+import CreateIcon from '@material-ui/icons/Create';
 
 const useStyles = makeStyles((theme) => ({
   fullHeight: {
@@ -35,17 +36,35 @@ const dummyServer = [
 export default function Dashboard({ setAuth }: ISetAuth) {
   const classes = useStyles();
   const history = useHistory();
+  const [edit, setEdit] = useState(false);
+
+  const toggleEdit = () => {
+    setEdit(!edit);
+  }
 
   return (
     <Fragment>
       <Headbar setAuth={setAuth} />
       <Container>
-        <Grid container spacing={2} alignItems="stretch" direction="row" justify="center">
-          <Grid item xs={12}>
+        <Grid
+          container
+          direction="row"
+          justify="flex-start"
+          alignItems="center"
+          spacing={2}
+        >
+          <Grid item>
             <Typography variant="h3" component="h1">
               Liste aller ihrer Server
             </Typography>
           </Grid>
+          <Grid item>
+            <IconButton onClick={toggleEdit}>
+              <CreateIcon color={edit ? "secondary" : "inherit"} />
+            </IconButton>
+          </Grid>
+        </Grid>
+        <Grid container spacing={2} alignItems="stretch" direction="row" justify="center">
           {dummyServer.map((server: IServerInfo) => (
             <Grid item xs={12} sm={6} md={4} key={server.id}>
               <Card className={classes.fullHeight}>
@@ -111,7 +130,7 @@ export default function Dashboard({ setAuth }: ISetAuth) {
             </Card>
           </Grid>
           {dummyServer.map((server: IServerInfo) => (
-            <ServerCard server={server} />
+            <ServerCard server={server} edit={edit} />
           ))}
         </Grid>
         <AddServer />

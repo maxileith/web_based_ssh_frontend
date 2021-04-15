@@ -95,6 +95,7 @@ const Register = ({ setAuth }: IRegister) => {
               id="email"
               label="E-Mail"
               name="email"
+              type="email"
               value={email}
               onChange={e => onChangeText(e)}
             />

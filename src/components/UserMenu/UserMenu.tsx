@@ -9,6 +9,7 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import StorageIcon from '@material-ui/icons/Storage';
+import PersonIcon from '@material-ui/icons/Person';
 
 const StyledMenu = withStyles({
   paper: {
@@ -69,7 +70,15 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-
+        <MenuItem
+          component={Link}
+          to="/user"
+        >
+          <ListItemIcon>
+            <PersonIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText primary="Person" />
+        </MenuItem>
         <MenuItem
           component={Link}
           to="/"
