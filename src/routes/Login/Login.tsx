@@ -71,14 +71,9 @@ export default function Login({ setAuth }: ISetAuth) {
 
         const body = { username, password };
 
-        API.post("auth/login/", body)
-            .then((res) => {
-                if (res.data.token) {
-                    window.localStorage.setItem("token", res.data.token);
-                    setAuth(true);
-                } else {
-                    setAuth(false);
-                }
+        API.post("auth/login/", body, { withCredentials: true })
+            .then(() => {
+                setAuth(true);
             })
             .catch((err) => {
                 setAuth(false);

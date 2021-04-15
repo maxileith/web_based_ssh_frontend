@@ -37,20 +37,19 @@ function App() {
     };
 
     useEffect(() => {
-        if (localStorage.token) {
-            API.get("auth/verify")
-                .then((res) => {
-                    setIsAuthenticated(res.data.success);
-                    setLoading(false);
-                })
-                .catch((err) => {
+        API.get("auth/verify", { withCredentials: true })
+            .then((res) => {
+                setIsAuthenticated(res.data.success);
+                setLoading(false);
+            })
+            .catch((err) => {
+                if (err.response.status === 401) {
+                    setIsAuthenticated(false);
+                } else {
                     console.error(err.message);
                     setLoading(false);
-                });
-        } else {
-            setIsAuthenticated(false);
-            setLoading(false);
-        }
+                }
+            });
     }, []);
 
     if (!loading) {
