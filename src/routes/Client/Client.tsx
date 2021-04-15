@@ -6,8 +6,6 @@ import {
     makeStyles,
     Typography,
     TextField,
-    CssBaseline,
-    Box,
     IconButton,
     Dialog,
     DialogTitle,
@@ -16,12 +14,13 @@ import {
     Button,
     DialogActions,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { toast } from "react-toastify";
 import Headbar from "../../components/Headbar/Headbar";
 import Term from "../../components/Terminal/Term";
-import CreateIcon from '@material-ui/icons/Create';
+import CreateIcon from "@material-ui/icons/Create";
+import { ISessionInfo } from "../../components/SessionCard/SessionCard";
+import API from "../../Api";
 
 const useStyles = makeStyles((theme) => ({
     console: {
@@ -40,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface ISetAuth {
+interface IClient {
     setAuth(bool: boolean): void;
 }
 
@@ -48,36 +47,56 @@ interface IMatchParams {
     id: string;
 }
 
-export default function Client({ match }: any, { setAuth }: ISetAuth) {
-    const id = match.params.id;
+export default function Client({ match }: any, props: IClient) {
+    const history = useHistory();
+    const [session, setSession] = useState({} as ISessionInfo);
+
+    const sessionId = match.params.id;
+    useEffect(() => {
+        API.get("saved_sessions/details/" + sessionId, {
+            withCredentials: true,
+        })
+            .then((data) => {
+                setSession(data.data.details);
+            })
+            .catch((err) => {
+                console.error(err.message);
+            });
+    }, []);
+
+    /*
     const classes = useStyles();
     const [loading, setLoading] = useState(true);
     const [open, setOpen] = useState(false);
+
     const [inputs, setInputs] = useState({
         note: "",
         servername: "",
     });
+
     const [informations, setInformations] = useState({
         host: "",
         user: "",
         provider: "",
         note: "",
         servername: "",
-    })
+    });
 
     const { note, servername } = inputs;
 
     const handleClickOpen = () => {
         setOpen(true);
-    }
+    };
 
     const handleClose = () => {
         setOpen(false);
-    }
+    };
 
-    const onChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const onChange = (
+        e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => {
         setInputs({ ...inputs, [e.target.id]: e.target.value });
-    }
+    };
 
     const refreshModal = () => {
         setInputs({
@@ -87,7 +106,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
         });
         setOpen(false);
     };
-
+    
     const updateServerInformations = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         let newInformations = {};
@@ -102,24 +121,24 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
 
             // Add api-call to update informations
         } else {
-            console.log('no updates');
+            console.log("no updates");
         }
         setOpen(false);
-    }
-
-
-    const history = useHistory();
-
-    useEffect(() => {
-        // get information about server 
-        //toast.success(id);
-    }, []);
+    };
+    */
 
     return (
         <Fragment>
-            <Headbar setAuth={setAuth} />
+            <Headbar setAuth={props.setAuth} />
             <Container>
-                <Grid container spacing={2} direction="row" justify="flex-start" alignItems="center">
+                {/*
+                <Grid
+                    container
+                    spacing={2}
+                    direction="row"
+                    justify="flex-start"
+                    alignItems="center"
+                >
                     <Grid item>
                         <Typography variant="h4">
                             Client Nr. {match.params.id}
@@ -131,6 +150,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                         </IconButton>
                     </Grid>
                 </Grid>
+                */}
                 <Grid
                     container
                     spacing={2}
@@ -143,9 +163,9 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                         <Card style={{ height: "100%" }}>
                             <CardContent>
                                 <Typography>
-                                    <b>Hostname:</b> traefik.webssh.leith.de{" "}
+                                    <b>Hostname:</b> {session.hostname}
                                     <br />
-                                    <b>User:</b> root
+                                    <b>User:</b> {session.username}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -154,7 +174,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                         <Card style={{ height: "100%" }}>
                             <CardContent>
                                 <Typography>
-                                    <b>Client-ID:</b> {id} <br />
+                                    <b>Client-ID:</b> {session.id} <br />
                                     <b>Verbunden seit:</b> 12:00
                                 </Typography>
                             </CardContent>
@@ -162,76 +182,74 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     </Grid>
                 </Grid>
 
-                <Term history={history} />
+                <Term history={history} sessionId={sessionId} />
 
-                <Dialog
-                    open={open}
-                    onClose={handleClose}
-                >
-                    <form onSubmit={(e) => updateServerInformations(e)}>
-                        <DialogTitle>
-                            Informationen Bearbeiten
-                        </DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Geben Sie ihrem Server einen Namen, um ihn besser zu identifizieren!
-                            </DialogContentText>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="flex-start"
-                                spacing={2}
-                            >
-                                <Grid item xs={12}>
-                                    <TextField
-                                        autoFocus
-                                        margin="dense"
-                                        id="servername"
-                                        label="Servername"
-                                        type="text"
-                                        onChange={(e) => onChange(e)}
-                                        value={servername}
-                                        fullWidth
-                                    />
+                {/*
+                    <Dialog open={open} onClose={handleClose}>
+                        <form onSubmit={(e) => updateServerInformations(e)}>
+                            <DialogTitle>Informationen Bearbeiten</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Geben Sie ihrem Server einen Namen, um ihn
+                                    besser zu identifizieren!
+                                </DialogContentText>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            autoFocus
+                                            margin="dense"
+                                            id="servername"
+                                            label="Servername"
+                                            type="text"
+                                            onChange={(e) => onChange(e)}
+                                            value={servername}
+                                            fullWidth
+                                        />
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </DialogContent>
-                        <DialogTitle>Details</DialogTitle>
-                        <DialogContent>
-                            <DialogContentText>
-                                Weitere Details zum Server
-                        </DialogContentText>
-                            <Grid
-                                container
-                                direction="row"
-                                justify="center"
-                                alignItems="flex-start"
-                                spacing={2}
-                            >
-                                <Grid item xs={12}>
-                                    <TextField
-                                        margin="dense"
-                                        id="note"
-                                        label="Notize"
-                                        type="text"
-                                        onChange={(e) => onChange(e)}
-                                        value={note}
-                                        fullWidth
-                                    />
+                            </DialogContent>
+                            <DialogTitle>Details</DialogTitle>
+                            <DialogContent>
+                                <DialogContentText>
+                                    Weitere Details zum Server
+                                </DialogContentText>
+                                <Grid
+                                    container
+                                    direction="row"
+                                    justify="center"
+                                    alignItems="flex-start"
+                                    spacing={2}
+                                >
+                                    <Grid item xs={12}>
+                                        <TextField
+                                            margin="dense"
+                                            id="note"
+                                            label="Notize"
+                                            type="text"
+                                            onChange={(e) => onChange(e)}
+                                            value={note}
+                                            fullWidth
+                                        />
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={refreshModal} color="primary">
-                                Cancel
-                            </Button>
-                            <Button type="submit" color="primary">
-                                Update
-                            </Button>
-                        </DialogActions>
-                    </form>
-                </Dialog>
+                            </DialogContent>
+                            <DialogActions>
+                                <Button onClick={refreshModal} color="primary">
+                                    Cancel
+                                </Button>
+                                <Button type="submit" color="primary">
+                                    Update
+                                </Button>
+                            </DialogActions>
+                        </form>
+                    </Dialog>
+                */}
             </Container>
         </Fragment>
     );

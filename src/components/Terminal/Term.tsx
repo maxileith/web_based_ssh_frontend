@@ -4,9 +4,11 @@ import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "../../components/Terminal/terminal.css";
 import { History } from "history";
+import { ISessionInfo } from "../SessionCard/SessionCard";
 
 interface IProps {
     history: History<unknown>;
+    sessionId: number;
 }
 
 export default class Term extends React.Component<IProps, {}> {
@@ -28,7 +30,10 @@ export default class Term extends React.Component<IProps, {}> {
 
     componentDidMount() {
         this.ws = new WebSocket(
-            "ws://" + window.location.hostname + ":8000/ws/ssh/1"
+            "ws://" +
+                window.location.hostname +
+                ":8000/ws/ssh/" +
+                this.props.sessionId
         );
 
         this.term.loadAddon(this.fitAddon);
