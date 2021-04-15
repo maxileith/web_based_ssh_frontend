@@ -12,7 +12,7 @@ import {
     TextField,
     Tooltip,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
@@ -27,23 +27,23 @@ const useStyles = makeStyles((theme) => ({
         position: "fixed",
     },
     dialogText: {
-        marginBottom: '0px',
+        marginBottom: "0px",
     },
 }));
 
-const AddServer = () => {
+const AddSession = () => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [inputs, setInputs] = useState({
-        host: "",
-        user: "",
+        hostname: "",
+        username: "",
         password: "",
-        provider: "",
-        note: "",
-        servername: "",
+        description: "",
+        title: "",
+        port: 22,
     });
 
-    const { host, user, password, provider, note, servername } = inputs;
+    const { hostname, username, password, description, title, port } = inputs;
 
     const handleClickOpen = () => {
         setOpen(true);
@@ -61,28 +61,27 @@ const AddServer = () => {
 
     const refreshModal = () => {
         setInputs({
-            host: "",
-            user: "",
+            hostname: "",
+            username: "",
             password: "",
-            provider: "",
-            note: "",
-            servername: "",
+            description: "",
+            title: "",
+            port: 22,
         });
         setOpen(false);
     };
 
-    const addServer = (e: FormEvent<HTMLFormElement>) => {
+    const addSession = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const body = { host, user, password, provider, note, servername };
 
-        API.post("servers/add", body, { withCredentials: true })
+        API.post("saved_sessions/", inputs, { withCredentials: true })
             .then((res) => {
-                toast.success("Server erfolgreich hinzugefügt");
+                toast.success("Session erfolgreich hinzugefügt");
                 setOpen(false);
             })
             .catch((err) => {
                 console.error(err.message);
-                toast.error("Server konnten nicht hinzugeführt werden");
+                toast.error("Session konnten nicht hinzugeführt werden");
             });
     };
 
@@ -103,12 +102,12 @@ const AddServer = () => {
                 onClose={handleClose}
                 aria-labelledby="form-dialog-title"
             >
-                <form onSubmit={(e) => addServer(e)}>
+                <form onSubmit={(e) => addSession(e)}>
                     <DialogTitle id="form-dialog-title">
                         Server hinzufügen
                     </DialogTitle>
                     <DialogContent>
-                        <DialogContentText className={classes.dialogText} >
+                        <DialogContentText className={classes.dialogText}>
                             Cooler Text über Server und Zeug
                         </DialogContentText>
                         <Grid
@@ -118,32 +117,44 @@ const AddServer = () => {
                             alignItems="flex-start"
                             spacing={2}
                         >
-                            <Grid item xs={12} sm={6} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     autoFocus
                                     margin="dense"
-                                    id="host"
+                                    id="hostname"
                                     label="Hostname"
                                     type="text"
                                     onChange={(e) => onChange(e)}
-                                    value={host}
+                                    value={hostname}
                                     fullWidth
                                     required
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={6} md={4}>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     margin="dense"
-                                    id="user"
-                                    label="User"
-                                    type="text"
+                                    id="port"
+                                    label="Port"
+                                    type="number"
                                     onChange={(e) => onChange(e)}
-                                    value={user}
+                                    value={port}
                                     fullWidth
                                     required
                                 />
                             </Grid>
-                            <Grid item xs={12} sm={12} md={4}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    margin="dense"
+                                    id="username"
+                                    label="Username"
+                                    type="text"
+                                    onChange={(e) => onChange(e)}
+                                    value={username}
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
                                 <TextField
                                     margin="dense"
                                     id="password"
@@ -156,9 +167,13 @@ const AddServer = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <DialogContentText className={classes.dialogText} style={{marginTop: '24px'}}>
-                            Geben Sie ihrem Server einen Namen, um ihn besser zu identifizieren!
-                            </DialogContentText>
+                        <DialogContentText
+                            className={classes.dialogText}
+                            style={{ marginTop: "24px" }}
+                        >
+                            Geben Sie ihrer Session einen Namen, um ihn besser
+                            zu identifizieren!
+                        </DialogContentText>
                         <Grid
                             container
                             direction="row"
@@ -169,11 +184,11 @@ const AddServer = () => {
                                 <TextField
                                     autoFocus
                                     margin="dense"
-                                    id="servername"
-                                    label="Servername"
+                                    id="title"
+                                    label="Title"
                                     type="text"
                                     onChange={(e) => onChange(e)}
-                                    value={servername}
+                                    value={title}
                                     fullWidth
                                 />
                             </Grid>
@@ -191,25 +206,14 @@ const AddServer = () => {
                             alignItems="flex-start"
                             spacing={2}
                         >
-                            <Grid item xs={12} sm={6}>
+                            <Grid item xs={12}>
                                 <TextField
                                     margin="dense"
-                                    id="provider"
-                                    label="Provider"
+                                    id="description"
+                                    label="Description"
                                     type="text"
                                     onChange={(e) => onChange(e)}
-                                    value={provider}
-                                    fullWidth
-                                />
-                            </Grid>
-                            <Grid item xs={12} sm={6}>
-                                <TextField
-                                    margin="dense"
-                                    id="note"
-                                    label="Note"
-                                    type="text"
-                                    onChange={(e) => onChange(e)}
-                                    value={note}
+                                    value={description}
                                     fullWidth
                                 />
                             </Grid>
@@ -229,4 +233,4 @@ const AddServer = () => {
     );
 };
 
-export default AddServer;
+export default AddSession;

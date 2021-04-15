@@ -1,7 +1,4 @@
 import {
-    Card,
-    CardActionArea,
-    CardContent,
     Container,
     Grid,
     IconButton,
@@ -9,27 +6,18 @@ import {
     Typography,
 } from "@material-ui/core";
 import { Fragment, useEffect, useState } from "react";
-import { useHistory } from "react-router";
 import Headbar from "../../components/Headbar/Headbar";
-import ServerCard from "../../components/SessionCard/SessionCard";
-import AddServer from "../../components/AddServer/AddServer";
+import SessionCard from "../../components/SessionCard/SessionCard";
+import AddSession from "../../components/AddSession/AddSession";
 import CreateIcon from "@material-ui/icons/Create";
 import API from "../../Api";
 import { ISessionInfo } from "../../components/SessionCard/SessionCard";
-
-const useStyles = makeStyles((theme) => ({
-    fullHeight: {
-        height: "100%",
-    },
-}));
 
 interface IDashboard {
     setAuth(bool: boolean): void;
 }
 
 export default function Dashboard(props: IDashboard) {
-    const classes = useStyles();
-    const history = useHistory();
     const [edit, setEdit] = useState(false);
     const [savedSessions, setSavedSessions] = useState([]);
 
@@ -45,8 +33,6 @@ export default function Dashboard(props: IDashboard) {
             .catch((err) => {
                 console.error(err.message);
             });
-        // get information about server
-        //toast.success(id);
     }, []);
 
     return (
@@ -193,10 +179,10 @@ export default function Dashboard(props: IDashboard) {
                     </Grid>
                     */}
                     {savedSessions.map((session: ISessionInfo) => (
-                        <ServerCard session={session} edit={edit} />
+                        <SessionCard session={session} edit={edit} />
                     ))}
                 </Grid>
-                <AddServer />
+                <AddSession />
             </Container>
         </Fragment>
     );

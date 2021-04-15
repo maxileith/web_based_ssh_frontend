@@ -10,93 +10,90 @@ import { IconButton, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import StorageIcon from "@material-ui/icons/Storage";
 import { useCookies } from "react-cookie";
-import PersonIcon from '@material-ui/icons/Person';
+import PersonIcon from "@material-ui/icons/Person";
 
 const StyledMenu = withStyles({
-  paper: {
-    border: "1px solid #d3d4d5",
-  },
+    paper: {
+        border: "1px solid #d3d4d5",
+    },
 })((props: MenuProps) => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: "bottom",
-      horizontal: "center",
-    }}
-    transformOrigin={{
-      vertical: "top",
-      horizontal: "center",
-    }}
-    {...props}
-  />
+    <Menu
+        elevation={0}
+        getContentAnchorEl={null}
+        anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
+        }}
+        transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+        }}
+        {...props}
+    />
 ));
 
 interface IUserMenu {
-  setAuth(bool: boolean): void;
+    setAuth(bool: boolean): void;
 }
 
 export default function CustomizedMenus({ setAuth }: IUserMenu) {
-  const [cookies, setCookie, removeCookie] = useCookies([""]);
+    const [cookies, setCookie, removeCookie] = useCookies([""]);
 
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
 
-  const logout = (e: React.MouseEvent<HTMLElement>) => {
-    e.preventDefault();
-    removeCookie("token");
-    localStorage.removeItem("token");
-    setAuth(false);
-  };
+    const logout = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
+        removeCookie("token");
+        localStorage.removeItem("token");
+        setAuth(false);
+    };
 
-  return (
-    <div>
-      <Tooltip title="Menu">
-        <IconButton
-          aria-label="menu"
-          aria-controls="customized-menu"
-          aria-haspopup="true"
-          onClick={handleClick}
-        >
-          <MenuIcon />
-        </IconButton>
-      </Tooltip>
-      <StyledMenu
-        id="customized-menu"
-        anchorEl={anchorEl}
-        keepMounted
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-      >
-        <MenuItem
-          component={Link}
-          to="/user"
-        >
-          <ListItemIcon>
-            <PersonIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Person" />
-        </MenuItem>
-        <MenuItem component={Link} to="/">
-          <ListItemIcon>
-            <StorageIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Server" />
-        </MenuItem>
-        <MenuItem onClick={(e) => logout(e)}>
-          <ListItemIcon>
-            <ExitToAppIcon fontSize="small" />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </MenuItem>
-      </StyledMenu>
-    </div>
-  );
+    return (
+        <div>
+            <Tooltip title="Menu">
+                <IconButton
+                    aria-label="menu"
+                    aria-controls="customized-menu"
+                    aria-haspopup="true"
+                    onClick={handleClick}
+                >
+                    <MenuIcon />
+                </IconButton>
+            </Tooltip>
+            <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+            >
+                <MenuItem component={Link} to="/user">
+                    <ListItemIcon>
+                        <PersonIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Person" />
+                </MenuItem>
+                <MenuItem component={Link} to="/">
+                    <ListItemIcon>
+                        <StorageIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Session" />
+                </MenuItem>
+                <MenuItem onClick={(e) => logout(e)}>
+                    <ListItemIcon>
+                        <ExitToAppIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Logout" />
+                </MenuItem>
+            </StyledMenu>
+        </div>
+    );
 }

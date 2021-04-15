@@ -44,19 +44,24 @@ interface ISessionCard {
     edit: boolean;
 }
 
-const ServerCard = (props: ISessionCard) => {
+const SessionCard = (props: ISessionCard) => {
     const classes = useStyles();
     const history = useHistory();
     const [open, setOpen] = useState(false);
 
-    const removeServer = (serverId: number) => {
-        console.log(`Server mit ${serverId} wird gelöscht`);
-        //history.go(0);
-        /*API.delete('/server', serverId)
-      .then((res) => {
-        toast.success('Server wurde gelöscht');
-
-      })*/
+    const removeSession = (sessionId: number) => {
+        API.delete("saved_sessions/details/" + sessionId, {
+            withCredentials: true,
+        })
+            .then(() => {
+                toast.success("Session removed.");
+                history.go(0);
+            })
+            .catch((err) => {
+                toast.error("An error ocurred while deleting the session.");
+                setOpen(false);
+                console.error(err.message);
+            });
     };
 
     return (
@@ -130,7 +135,7 @@ const ServerCard = (props: ISessionCard) => {
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={() => removeServer(props.session.id)}
+                        onClick={() => removeSession(props.session.id)}
                     >
                         Löschen
                     </Button>
@@ -140,4 +145,4 @@ const ServerCard = (props: ISessionCard) => {
     );
 };
 
-export default ServerCard;
+export default SessionCard;

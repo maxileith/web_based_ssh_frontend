@@ -1,17 +1,20 @@
-import { LaptopWindows } from "@material-ui/icons";
 import React from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "../../components/Terminal/terminal.css";
 import { History } from "history";
-import { ISessionInfo } from "../SessionCard/SessionCard";
+import { toast } from "react-toastify";
 
 interface IProps {
     history: History<unknown>;
     sessionId: number;
 }
 
-export default class Term extends React.Component<IProps, {}> {
+interface STerm {
+    alreadyGone: NodeJS.Timeout | null;
+}
+
+export default class Term extends React.Component<IProps, STerm> {
     term_dom: React.RefObject<HTMLDivElement>;
     term: Terminal;
     fitAddon: FitAddon;
@@ -25,6 +28,10 @@ export default class Term extends React.Component<IProps, {}> {
         this.fitAddon = new FitAddon();
 
         this.term.onData(this.onData);
+
+        this.state = {
+            alreadyGone: null,
+        };
         // this.term.onResize(this.onResize);
     }
 
@@ -49,15 +56,19 @@ export default class Term extends React.Component<IProps, {}> {
 
         this.ws.onclose = () => {
             this.term.write("returning to dashboard ...");
-            setTimeout(() => {
-                this.props.history.push("/");
-            }, 5000);
+            toast.warning("Returning to dashboard.", { pauseOnHover: false });
+            this.setState({
+                alreadyGone: setTimeout(() => {
+                    this.props.history.push("/");
+                }, 5000),
+            });
         };
     }
 
     componentWillUnmount() {
         this.term.dispose();
         this.ws.close();
+        if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }
 
     onData = (data: string) => {
