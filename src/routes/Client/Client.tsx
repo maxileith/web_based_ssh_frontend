@@ -17,6 +17,7 @@ import {
     DialogActions,
 } from "@material-ui/core";
 import React, { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import Headbar from "../../components/Headbar/Headbar";
 import Term from "../../components/Terminal/Term";
@@ -107,6 +108,8 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
     }
 
 
+    const history = useHistory();
+
     useEffect(() => {
         // get information about server 
         //toast.success(id);
@@ -159,7 +162,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                     </Grid>
                 </Grid>
 
-                <Term />
+                <Term history={history} />
 
                 <Dialog
                     open={open}

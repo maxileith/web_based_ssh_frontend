@@ -75,7 +75,7 @@ const AddServer = () => {
         e.preventDefault();
         const body = { host, user, password, provider, note, servername };
 
-        API.post("servers/add", body)
+        API.post("servers/add", body, { withCredentials: true })
             .then((res) => {
                 toast.success("Server erfolgreich hinzugefügt");
                 setOpen(false);

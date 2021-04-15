@@ -2,21 +2,20 @@ import { Button, Container, makeStyles, TextField } from "@material-ui/core";
 import React, { ChangeEvent, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
-import API from '../../Api';
+import API from "../../Api";
 import Headbar from "../../components/Headbar/Headbar";
 
 const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
-}))
+}));
 
 interface IRegister {
   setAuth(bool: boolean): void;
 }
 
 const Register = ({ setAuth }: IRegister) => {
-
   const [inputs, setInputs] = useState({
     first_name: "",
     last_name: "",
@@ -30,7 +29,9 @@ const Register = ({ setAuth }: IRegister) => {
 
   const { first_name, last_name, email, username, password } = inputs;
 
-  const onChangeText = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const onChangeText = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
   };
 
@@ -39,23 +40,24 @@ const Register = ({ setAuth }: IRegister) => {
     const body = { first_name, last_name, email, password, username };
     console.log(body);
 
-    API.post('auth/register', body)
+    API.post("auth/register", body)
       .then((res) => {
         if (res.data.token) {
           //localStorage.setItem('token', res.data.token);
-          history.push('/login');
+          history.push("/login");
         }
       })
       .catch((err) => {
         if (err.response) {
           if (err.response.status === 401) {
             toast.error(err.response.data);
-          } 
+          }
         } else {
           console.error(err.message);
         }
-      })
-  }
+      });
+  };
+
 
   return (
     <>

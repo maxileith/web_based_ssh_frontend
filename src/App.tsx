@@ -11,7 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Register from './routes/Register/Register';
 import API from './Api';
 import Verify from './routes/Verify/Verify';
-import User from './routes/User/User';
+import User from './routes/User/User'
 
 const theme = createMuiTheme({
   palette: {
@@ -34,33 +34,34 @@ function App() {
   }
 
   useEffect(() => {
-    if(localStorage.token) {
-      API.get('auth/verify')
-        .then((res) => {
-          setIsAuthenticated(res.data.success);
-          setLoading(false);
-        })
-        .catch((err) => {
+    API.get("auth/verify", { withCredentials: true })
+      .then((res) => {
+        setIsAuthenticated(res.data.success);
+        setLoading(false);
+      })
+      .catch((err) => {
+        if (err.response) {
+          if (err.response.status === 401) {
+            setIsAuthenticated(false);
+          }
+        } else {
           console.error(err.message);
           setLoading(false);
-        })
-    } else {
-      setIsAuthenticated(false);
-      setLoading(false);
-    }
-  }, [])
+        }
+      });
+  }, []);
 
   if (!loading) {
     return (
       <ThemeProvider theme={theme}>
         <Router>
           <Switch>
-            <Route exact path="/" render={props => isAuthenticated ? <Dashboard {...props} setAuth={setAuth} /> : <Redirect to="/login" /> } />
-            <Route exact path="/login" render={props => !isAuthenticated ? <Login {...props} setAuth={setAuth} /> : <Redirect to="/" /> } />
-            <Route exact path="/register" render={props => !isAuthenticated ? <Register {...props} setAuth={setAuth} /> : <Redirect to="/" /> } /> 
+            <Route exact path="/" render={props => isAuthenticated ? <Dashboard {...props} setAuth={setAuth} /> : <Redirect to="/login" />} />
+            <Route exact path="/login" render={props => !isAuthenticated ? <Login {...props} setAuth={setAuth} /> : <Redirect to="/" />} />
+            <Route exact path="/register" render={props => !isAuthenticated ? <Register {...props} setAuth={setAuth} /> : <Redirect to="/" />} />
             <Route path="/client/:id" render={props => isAuthenticated ? <Client {...props} setAuth={setAuth} /> : <Redirect to="/login" />} />
             <Route path="/verify/:token" render={props => !isAuthenticated ? <Verify {...props} setAuth={setAuth} /> : <Redirect to="/" />} />
-            <Route path="/user" render={props => isAuthenticated ? <User {...props} setAuth={setAuth} /> : <Redirect to="/login" /> } />
+            <Route path="/user" render={props => isAuthenticated ? <User {...props} setAuth={setAuth} /> : <Redirect to="/login" />} />
           </Switch>
         </Router>
       </ThemeProvider>
