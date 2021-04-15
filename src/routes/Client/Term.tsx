@@ -1,9 +1,13 @@
+import { LaptopWindows } from "@material-ui/icons";
 import React from "react";
 import { Terminal } from "xterm";
 import { FitAddon } from "xterm-addon-fit";
 import "../../components/Terminal/terminal.css";
+import { History } from "history";
 
-interface IProps {}
+interface IProps {
+    history: History<unknown>;
+}
 
 export default class Term extends React.Component<IProps, {}> {
     term_dom: React.RefObject<HTMLDivElement>;
@@ -24,7 +28,7 @@ export default class Term extends React.Component<IProps, {}> {
 
     componentDidMount() {
         this.ws = new WebSocket(
-            "ws://" + window.location.hostname + ":8000/ws/ssh/"
+            "ws://" + window.location.hostname + ":8000/ws/ssh/1"
         );
 
         this.term.loadAddon(this.fitAddon);
@@ -40,6 +44,9 @@ export default class Term extends React.Component<IProps, {}> {
 
         this.ws.onclose = () => {
             this.term.write("returning to dashboard ...");
+            setTimeout(() => {
+                this.props.history.push("/");
+            }, 5000);
         };
     }
 
