@@ -10,6 +10,7 @@ import {
     Box,
 } from "@material-ui/core";
 import React, { Fragment, useEffect } from "react";
+import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import Headbar from "../../components/Headbar/Headbar";
 import Term from "./Term";
@@ -42,6 +43,8 @@ interface IMatchParams {
 export default function Client({ match }: any, { setAuth }: ISetAuth) {
     const id = match.params.id;
     const classes = useStyles();
+
+    const history = useHistory();
 
     useEffect(() => {
         //toast.success(id);
@@ -82,7 +85,7 @@ export default function Client({ match }: any, { setAuth }: ISetAuth) {
                         </Card>
                     </Grid>
                 </Grid>
-                <Term />
+                <Term history={history} />
             </Container>
         </Fragment>
     );
