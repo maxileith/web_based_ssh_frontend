@@ -36,7 +36,7 @@ interface IUserMenu {
 }
 
 export default function CustomizedMenus({ setAuth }: IUserMenu) {
-    const [_cookies, setCookie, _removeCookie] = useCookies([""]);
+    const [_cookies, _setCookie, removeCookie] = useCookies([""]);
 
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -50,7 +50,7 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
 
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        setCookie("token", "", { path: "/", maxAge: -1 });
+        removeCookie("token");
         localStorage.removeItem("token");
         setAuth(false);
     };
