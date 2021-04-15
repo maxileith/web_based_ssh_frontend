@@ -43,6 +43,7 @@ function App() {
         if (err.response) {
           if (err.response.status === 401) {
             setIsAuthenticated(false);
+            setLoading(false);
           }
         } else {
           console.error(err.message);
