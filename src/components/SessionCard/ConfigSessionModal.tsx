@@ -85,14 +85,13 @@ export default function ConfigSessionModal(props: IConfigModal) {
     if (Object.keys(newInformations).length > 0) {
       let newSession: any = inputs;
       delete newSession.password;
-      API.patch('/saved_sessions/details', newInformations)
+      API.patch(`/saved_sessions/details/${props.session.id}`, newInformations)
         .then((res) => {
           props.update(newSession);
           toast.success(res.data.message);
         })
         .catch((err) => {
           if (err.response) {
-            console.log(err.response);
             if(err.response.data) {
               toast.error(err.response.data.message);
             }
