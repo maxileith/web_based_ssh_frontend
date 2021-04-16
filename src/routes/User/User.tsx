@@ -102,6 +102,19 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        console.log(e);
+        const body = {
+            content: sshInput,
+        };
+        API.put("/known_hosts/", body, { withCredentials: true })
+            .then(() => {
+                toast.success("Saved known hosts.");
+                setSshKeys(sshInput);
+            })
+            .catch((err) => {
+                console.log(err.message);
+                toast.error("Failed to save known hosts.");
+            });
 
         // API call für Änderungen des Key-Files
     };
@@ -297,13 +310,13 @@ export default function Client({ setAuth }: ISetAuth) {
                                 className={classes.button}
                                 type="submit"
                             >
-                                Update
+                                Save
                             </Button>
                         </Grid>
                     </Grid>
                 </form>
                 <Typography variant="h5" gutterBottom>
-                    SSH-Keys:
+                    Known hosts:
                 </Typography>
                 <form onSubmit={(e) => onSshSubmit(e)}>
                     <TextareaAutosize
@@ -338,7 +351,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 className={classes.button}
                                 type="submit"
                             >
-                                Update
+                                Save
                             </Button>
                         </Grid>
                     </Grid>
