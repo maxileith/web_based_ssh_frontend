@@ -52,26 +52,24 @@ export default function Client({ setAuth }: ISetAuth) {
     const [sshInput, setSshInput] = useState("");
     const [passwordError, setPasswordError] = useState(false);
     const [userInfo, setUserInfo] = useState({
-        surname: "Horst",
-        name: "Günter",
-        mail: "horst@günter.de",
+        last_name: "",
+        first_name: "",
+        email: "",
     });
     const [inputs, setInputs] = useState({
-        surname: "Horst",
-        name: "Günter",
-        mail: "horst@günter.de",
-        oldPassword: "",
-        newPassword1: "",
-        newPassword2: "",
+        ...userInfo,
+        old_password: "",
+        password: "",
+        password2: "",
     });
 
     const {
-        surname,
-        name,
-        mail,
-        oldPassword,
-        newPassword1,
-        newPassword2,
+        last_name,
+        first_name,
+        email,
+        old_password,
+        password,
+        password2,
     } = inputs;
 
     const onSshChange = (
@@ -105,34 +103,34 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const resetInputs = () => {
         setInputs({
-            surname: userInfo.surname,
-            name: userInfo.name,
-            mail: userInfo.mail,
-            oldPassword: "",
-            newPassword1: "",
-            newPassword2: "",
+            last_name: userInfo.last_name,
+            first_name: userInfo.first_name,
+            email: userInfo.email,
+            old_password: "",
+            password: "",
+            password2: "",
         });
     };
 
     const onSubmitChanges = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (oldPassword && newPassword1 && newPassword2) {
-            if (newPassword1 !== newPassword2) {
+        if (old_password && password && password2) {
+            if (password !== password2) {
                 toast.error(
                     "Das neue PAsswort wurde nicht korrekt wiederholt!"
                 );
             } else {
                 // API call für Passwort-Änderung
             }
-        } else if (oldPassword || newPassword1 || newPassword2) {
+        } else if (old_password || password || password2) {
             toast.warning(
                 "Wenn sie ihr Passwort ändern wollen, müssen sie alle Felder ausfüllen!"
             );
         } else if (
-            surname !== userInfo.surname ||
-            name !== userInfo.name ||
-            mail !== userInfo.mail
+            last_name !== userInfo.last_name ||
+            first_name !== userInfo.first_name ||
+            email !== userInfo.email
         ) {
             //API call für Änderungen
         } else {
@@ -146,14 +144,14 @@ export default function Client({ setAuth }: ISetAuth) {
         e.preventDefault();
         setInputs({ ...inputs, [e.target.name]: e.target.value });
 
-        if (e.target.name === "newPassword2") {
-            if (e.target.value !== newPassword1) {
+        if (e.target.name === "password2") {
+            if (e.target.value !== password) {
                 setPasswordError(true);
             } else {
                 setPasswordError(false);
             }
-        } else if (e.target.name === "newPassword1") {
-            if (e.target.value !== newPassword2) {
+        } else if (e.target.name === "password") {
+            if (e.target.value !== password2) {
                 setPasswordError(true);
             } else {
                 setPasswordError(false);
@@ -170,6 +168,15 @@ export default function Client({ setAuth }: ISetAuth) {
             .catch((err) => {
                 console.log(err.message);
                 toast.error("Failed to load known hosts.");
+            });
+        API.get("/personal_data/", { withCredentials: true })
+            .then((data) => {
+                setUserInfo(data.data);
+                setInputs(data.data);
+            })
+            .catch((err) => {
+                console.log(err.message);
+                toast.error("Failed to load personal details.");
             });
     }, []);
 
@@ -191,10 +198,10 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                name="surname"
-                                id="surname"
+                                name="first_name"
+                                id="first_name"
                                 label="Vorname"
-                                value={surname}
+                                value={first_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                                 required
@@ -203,10 +210,10 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                name="name"
-                                id="name"
+                                name="last_name"
+                                id="last_name"
                                 label="Nachname"
-                                value={name}
+                                value={last_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                                 required
@@ -215,11 +222,11 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                name="mail"
-                                id="mail"
+                                name="email"
+                                id="email"
                                 label="E-Mail"
                                 type="email"
-                                value={mail}
+                                value={email}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                                 required
@@ -235,11 +242,11 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12}>
                             <TextField
                                 variant="outlined"
-                                name="oldPassword"
-                                id="oldPassword"
+                                name="old_password"
+                                id="old_password"
                                 label="Passwort"
                                 type="password"
-                                value={oldPassword}
+                                value={old_password}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                             />
@@ -247,11 +254,11 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                name="newPassword1"
-                                id="newPassword1"
+                                name="password"
+                                id="password"
                                 label="Neues Passwort"
                                 type="password"
-                                value={newPassword1}
+                                value={password}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                             />
@@ -259,11 +266,11 @@ export default function Client({ setAuth }: ISetAuth) {
                         <Grid item xs={12} sm={6}>
                             <TextField
                                 variant="outlined"
-                                name="newPassword2"
-                                id="newPassword2"
+                                name="password2"
+                                id="password2"
                                 label="Neues Passwort wiederholen"
                                 type="password"
-                                value={newPassword2}
+                                value={password2}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                                 error={passwordError}

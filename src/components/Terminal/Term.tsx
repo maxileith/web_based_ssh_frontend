@@ -40,7 +40,9 @@ export default class Term extends React.Component<IProps, STerm> {
             "ws://" +
                 window.location.hostname +
                 ":8000/ws/ssh/" +
-                this.props.sessionId
+                this.props.sessionId +
+                "?token=" +
+                localStorage.getItem("token")
         );
 
         this.term.loadAddon(this.fitAddon);

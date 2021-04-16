@@ -12,12 +12,10 @@ const instance = axios.create({
     baseURL: apiUrl,
 });
 
-/*
 instance.interceptors.request.use(function (config) {
     const token = localStorage.token;
     config.headers.token = token;
     return config;
 });
-*/
 
 export default instance;
