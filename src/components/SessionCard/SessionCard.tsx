@@ -72,13 +72,17 @@ const SessionCard = (props: ISessionCard) => {
         API.delete("saved_sessions/details/" + sessionId, {
             withCredentials: true,
         })
-            .then(() => {
-                toast.success("Session removed.");
+            .then((res) => {
+                toast.success(res.data.message);
                 props.delete();
                 setOpenDelete(false);
             })
             .catch((err) => {
-                toast.error("An error ocurred while deleting the session.");
+                if (err.response) {
+                    if (err.response.data) {
+                        toast.error(err.response.data.message);
+                    }
+                }
                 setOpenDelete(false);
                 console.error(err.message);
             });
@@ -86,7 +90,7 @@ const SessionCard = (props: ISessionCard) => {
 
     const determineStyle = () => {
         if (props.edit) return classes.editCard;
-        
+
         if (props.deleteable) return classes.deleteCard;
 
         return classes.fullHeight;
@@ -129,79 +133,79 @@ const SessionCard = (props: ISessionCard) => {
 
     return (
         <>
-        <Grid item xs={12} sm={6} md={4} key={props.session.id}>
-            <Card
-                className={determineStyle()}
-            >
-                <CardActionArea
-                    className={classes.fullHeight}
-                    onClick={determineOnClick}
+            <Grid item xs={12} sm={6} md={4} key={props.session.id}>
+                <Card
+                    className={determineStyle()}
                 >
-                    <CardContent className={classes.fullHeight}>
-                        <Grid
-                            container
-                            direction="row"
-                            justify="space-between"
-                            alignItems="center"
-                        >
-                            <Grid item>
-                                <Typography
-                                    gutterBottom
-                                    variant="h5"
-                                    component="h2"
-                                >
-                                    {props.session.title}
-                                </Typography>
+                    <CardActionArea
+                        className={classes.fullHeight}
+                        onClick={determineOnClick}
+                    >
+                        <CardContent className={classes.fullHeight}>
+                            <Grid
+                                container
+                                direction="row"
+                                justify="space-between"
+                                alignItems="center"
+                            >
+                                <Grid item>
+                                    <Typography
+                                        gutterBottom
+                                        variant="h5"
+                                        component="h2"
+                                    >
+                                        {props.session.title}
+                                    </Typography>
+                                </Grid>
+                                {determineIcon()}
                             </Grid>
-                            {determineIcon()}
-                        </Grid>
-                        <Typography gutterBottom>
-                            Hostname: {props.session.hostname}, User:{" "}
-                            {props.session.username}
-                        </Typography>
-                        <Typography
-                            variant="body2"
-                            color="textSecondary"
-                            component="p"
-                        >
-                            {props.session.description}
-                        </Typography>
-                    </CardContent>
-                </CardActionArea>
-            </Card>
-            <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
-                <DialogTitle>Server entfernen</DialogTitle>
-                <DialogContent>
-                    <DialogContentText>
-                        Sind Sie sich sicher, dass sie den Server '
+                            <Typography gutterBottom>
+                                Hostname: {props.session.hostname}, User:{" "}
+                                {props.session.username}
+                            </Typography>
+                            <Typography
+                                variant="body2"
+                                color="textSecondary"
+                                component="p"
+                            >
+                                {props.session.description}
+                            </Typography>
+                        </CardContent>
+                    </CardActionArea>
+                </Card>
+                <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
+                    <DialogTitle>Server entfernen</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Sind Sie sich sicher, dass sie den Server '
                         {props.session.hostname}' löschen wollen? Es werden alle
                         Daten bezüglich der Verbindung gelöscht!
                     </DialogContentText>
-                </DialogContent>
-                <DialogActions>
-                    <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={() => setOpenDelete(false)}
-                    >
-                        Abbrechen
+                    </DialogContent>
+                    <DialogActions>
+                        <Button
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => setOpenDelete(false)}
+                        >
+                            Abbrechen
                     </Button>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => removeSession(props.session.id)}
-                    >
-                        Löschen
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={() => removeSession(props.session.id)}
+                        >
+                            Löschen
                     </Button>
-                </DialogActions>
-            </Dialog>
-        </Grid>
-        <ConfigSessionModal
-            open={openEdit}
-            setOpen={ChangeOpenEdit}
-            session={props.session}
-            update={updateSession}
-        />
+                    </DialogActions>
+                </Dialog>
+            </Grid>
+            <ConfigSessionModal
+                open={openEdit}
+                setOpen={ChangeOpenEdit}
+                session={props.session}
+                update={updateSession}
+            />
         </>
     );
 };

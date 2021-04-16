@@ -14,6 +14,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import API from "../../Api";
 import { ISessionInfo } from "../../components/SessionCard/SessionCard";
 import React from "react";
+import { toast } from "react-toastify";
 
 interface IDashboard {
     setAuth(bool: boolean): void;
@@ -39,30 +40,35 @@ export default function Dashboard(props: IDashboard) {
     const addSession = (session: ISessionInfo) => {
         let newSavedSessions = savedSessions.sessions;
         newSavedSessions.push(session);
-        setSavedSessions({ sessions: newSavedSessions});
+        setSavedSessions({ sessions: newSavedSessions });
     }
 
     const updateSession = (index: number, session: ISessionInfo) => {
         let updatedSavedSessions = savedSessions.sessions;
         updatedSavedSessions[index] = session;
         console.log(updatedSavedSessions);
-        setSavedSessions({ sessions: updatedSavedSessions});
+        setSavedSessions({ sessions: updatedSavedSessions });
     }
 
     const deleteSession = (index: number) => {
         let updatedSavedSessions = savedSessions.sessions;
         updatedSavedSessions.splice(index, 1);
         console.log(updatedSavedSessions);
-        setSavedSessions({ sessions: updatedSavedSessions});
+        setSavedSessions({ sessions: updatedSavedSessions });
     }
 
     useEffect(() => {
         API.get("saved_sessions/", { withCredentials: true })
             .then((data) => {
-                setSavedSessions({ sessions: data.data["sessions"]});
+                setSavedSessions({ sessions: data.data["sessions"] });
                 console.log(data.data["sessions"]);
             })
             .catch((err) => {
+                if (err.response) {
+                    if (err.response.data) {
+                        toast.error(err.response.data.message);
+                    }
+                }
                 console.error(err.message);
             });
     }, []);
@@ -218,7 +224,7 @@ export default function Dashboard(props: IDashboard) {
                     </Grid>
                     */}
                     {savedSessions.sessions.map((session: ISessionInfo, index: number) => (
-                        <SessionCard 
+                        <SessionCard
                             session={session}
                             edit={edit}
                             deleteable={deleteable}

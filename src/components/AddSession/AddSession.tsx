@@ -81,14 +81,18 @@ const AddSession = (props: IAddSession) => {
 
         API.post("saved_sessions/", inputs, { withCredentials: true })
             .then((res) => {
-                toast.success("Session erfolgreich hinzugefügt");
+                toast.success(res.data.message);
                 props.addSession(res.data.details);
                 refreshModal();
                 setOpen(false);
             })
             .catch((err) => {
                 console.error(err.message);
-                toast.error("Session konnten nicht hinzugeführt werden");
+                if (err.response) {
+                    if (err.response.data) {
+                        toast.error(err.response.data.message);
+                    }
+                }
             });
     };
 
