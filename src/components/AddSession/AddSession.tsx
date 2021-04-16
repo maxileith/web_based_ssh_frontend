@@ -16,6 +16,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
+import { ISessionInfo } from "../SessionCard/ConfigSessionModal";
 
 const useStyles = makeStyles((theme) => ({
     absolute: {
@@ -31,7 +32,11 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddSession = () => {
+interface IAddSession {
+    addSession: (session: ISessionInfo) => void;
+}
+
+const AddSession = (props: IAddSession) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [inputs, setInputs] = useState({
@@ -77,6 +82,8 @@ const AddSession = () => {
         API.post("saved_sessions/", inputs, { withCredentials: true })
             .then((res) => {
                 toast.success("Session erfolgreich hinzugefügt");
+                props.addSession(res.data.details);
+                refreshModal();
                 setOpen(false);
             })
             .catch((err) => {
