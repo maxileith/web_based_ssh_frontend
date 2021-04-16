@@ -16,8 +16,10 @@ import {
 import React, { useState } from "react";
 import { useHistory } from "react-router";
 import DeleteIcon from "@material-ui/icons/Delete";
+import CreateIcon from "@material-ui/icons/Create";
 import API from "../../Api";
 import { toast } from "react-toastify";
+import ConfigSessionModal from "./ConfigSessionModal";
 
 const useStyles = makeStyles((theme: Theme) => ({
     fullHeight: {
@@ -25,9 +27,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     deleteCard: {
         "&:hover": {
-            border: "2px solid red",
+            border: "2px solid #ff1744",
             margin: "-2px",
         },
+        height: "100%",
+    },
+    editCard: {
+        "&:hover": {
+            border: "2px solid #2196f3",
+            margin: "-2px",
+        },
+        height: "100%",
     },
 }));
 
@@ -37,17 +47,26 @@ export interface ISessionInfo {
     hostname: String;
     username: String;
     description: String;
+    port: number;
 }
 
 interface ISessionCard {
     session: ISessionInfo;
     edit: boolean;
+    deleteable: boolean;
+    update: (session: ISessionInfo) => void;
+    delete: () => void;
 }
 
 const SessionCard = (props: ISessionCard) => {
     const classes = useStyles();
     const history = useHistory();
-    const [open, setOpen] = useState(false);
+    const [openEdit, setOpenEdit] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+
+    const ChangeOpenEdit = (bool: boolean) => {
+        setOpenEdit(bool);
+    }
 
     const removeSession = (sessionId: number) => {
         API.delete("saved_sessions/details/" + sessionId, {
@@ -55,27 +74,68 @@ const SessionCard = (props: ISessionCard) => {
         })
             .then(() => {
                 toast.success("Session removed.");
-                history.go(0);
+                props.delete();
+                setOpenDelete(false);
             })
             .catch((err) => {
                 toast.error("An error ocurred while deleting the session.");
-                setOpen(false);
+                setOpenDelete(false);
                 console.error(err.message);
             });
     };
 
+    const determineStyle = () => {
+        if (props.edit) return classes.editCard;
+        
+        if (props.deleteable) return classes.deleteCard;
+
+        return classes.fullHeight;
+    }
+
+    const determineIcon = () => {
+        if (props.edit) {
+            return (
+                <Grid item>
+                    <CreateIcon color="primary" />
+                </Grid>
+            )
+        }
+        if (props.deleteable) {
+            return (
+                <Grid item>
+                    <DeleteIcon color="secondary" />
+                </Grid>
+            )
+        }
+
+        return (<></>)
+    }
+
+    const determineOnClick = () => {
+        if (props.edit) {
+            setOpenEdit(true);
+        } else if (props.deleteable) {
+            setOpenDelete(true);
+        } else {
+            history.push(`/client/${props.session.id}`)
+        }
+    }
+
+    const updateSession = (session: ISessionInfo) => {
+        console.log("---");
+        console.log(session);
+        props.update(session);
+    }
+
     return (
+        <>
         <Grid item xs={12} sm={6} md={4} key={props.session.id}>
             <Card
-                className={props.edit ? classes.deleteCard : classes.fullHeight}
+                className={determineStyle()}
             >
                 <CardActionArea
                     className={classes.fullHeight}
-                    onClick={
-                        props.edit
-                            ? () => setOpen(true)
-                            : () => history.push(`/client/${props.session.id}`)
-                    }
+                    onClick={determineOnClick}
                 >
                     <CardContent className={classes.fullHeight}>
                         <Grid
@@ -93,13 +153,7 @@ const SessionCard = (props: ISessionCard) => {
                                     {props.session.title}
                                 </Typography>
                             </Grid>
-                            {props.edit ? (
-                                <Grid item>
-                                    <DeleteIcon color="secondary" />
-                                </Grid>
-                            ) : (
-                                <></>
-                            )}
+                            {determineIcon()}
                         </Grid>
                         <Typography gutterBottom>
                             Hostname: {props.session.hostname}, User:{" "}
@@ -115,7 +169,7 @@ const SessionCard = (props: ISessionCard) => {
                     </CardContent>
                 </CardActionArea>
             </Card>
-            <Dialog open={open} onClose={() => setOpen(false)}>
+            <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
                 <DialogTitle>Server entfernen</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
@@ -128,7 +182,7 @@ const SessionCard = (props: ISessionCard) => {
                     <Button
                         variant="contained"
                         color="secondary"
-                        onClick={() => setOpen(false)}
+                        onClick={() => setOpenDelete(false)}
                     >
                         Abbrechen
                     </Button>
@@ -142,6 +196,13 @@ const SessionCard = (props: ISessionCard) => {
                 </DialogActions>
             </Dialog>
         </Grid>
+        <ConfigSessionModal
+            open={openEdit}
+            setOpen={ChangeOpenEdit}
+            session={props.session}
+            update={updateSession}
+        />
+        </>
     );
 };
 
