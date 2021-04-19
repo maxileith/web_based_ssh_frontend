@@ -9,7 +9,7 @@ import {
     Checkbox,
     FormControlLabel,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Headbar from "../../components/Headbar/Headbar";
 import API from "../../Api";
@@ -49,7 +49,7 @@ interface ISetAuth {
 
 export default function Client({ setAuth }: ISetAuth) {
     const classes = useStyles();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [sshKeys, setSshKeys] = useState("");
     const [sshInput, setSshInput] = useState("");
     const [passwordError, setPasswordError] = useState(false);
@@ -77,7 +77,7 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const handlePasswordChange = () => {
         setChangePassword(!changePassword);
-    }
+    };
 
     const onSshChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -126,31 +126,31 @@ export default function Client({ setAuth }: ISetAuth) {
             updates = { first_name: first_name };
         }
         if (last_name !== userInfo.last_name) {
-            updates = { ...updates, last_name: last_name }
+            updates = { ...updates, last_name: last_name };
         }
         if (email !== userInfo.email) {
             updates = { ...updates, email: email };
         }
         if (changePassword) {
-            if(password === password2) {
+            if (password === password2) {
                 updates = {
                     ...updates,
                     old_password: old_password,
-                    password: password
+                    password: password,
                 };
             }
         }
         if (Object.keys(updates).length > 0) {
-            API.patch('/personal_data/', updates)
+            API.patch("/personal_data/", updates)
                 .then((res) => {
-                    toast.success('Updated personal data successfully!')
+                    toast.success("Updated personal data successfully!");
                 })
                 .catch((err) => {
                     console.error(err.message);
                     toast.error("Changes could not be saved!");
-                })
+                });
         } else {
-            toast.warning("There are no changes to save!")
+            toast.warning("There are no changes to save!");
         }
     };
 
@@ -201,7 +201,7 @@ export default function Client({ setAuth }: ISetAuth) {
             <Headbar setAuth={setAuth} />
             <Container>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Persönliche Daten
+                    Personal Data
                 </Typography>
                 <form onSubmit={(e) => onSubmitChanges(e)}>
                     <Grid
@@ -216,7 +216,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="first_name"
                                 id="first_name"
-                                label="Vorname"
+                                label="Forename"
                                 value={first_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
@@ -228,7 +228,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="last_name"
                                 id="last_name"
-                                label="Nachname"
+                                label="Surname"
                                 value={last_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
@@ -250,9 +250,9 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography>
-                                Um ihr Passwort zu ändern, gaben sie bitte ihr
-                                Passwort ein, suche sie sich ein Neues aus und
-                                wiederholen sie es.
+                                To change your password, please enter your
+                                current password, choose a new one and repeat
+                                it.
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
@@ -260,7 +260,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="old_password"
                                 id="old_password"
-                                label="Passwort"
+                                label="Current Password"
                                 type="password"
                                 value={old_password}
                                 onChange={(e) => onInputChanges(e)}
@@ -272,7 +272,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="password"
                                 id="password"
-                                label="Neues Passwort"
+                                label="New Password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => onInputChanges(e)}
@@ -284,7 +284,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="password2"
                                 id="password2"
-                                label="Neues Passwort wiederholen"
+                                label="Repeat new Password"
                                 type="password"
                                 value={password2}
                                 onChange={(e) => onInputChanges(e)}

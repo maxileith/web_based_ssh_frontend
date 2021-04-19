@@ -66,7 +66,7 @@ const SessionCard = (props: ISessionCard) => {
 
     const ChangeOpenEdit = (bool: boolean) => {
         setOpenEdit(bool);
-    }
+    };
 
     const removeSession = (sessionId: number) => {
         API.delete("saved_sessions/details/" + sessionId, {
@@ -94,7 +94,7 @@ const SessionCard = (props: ISessionCard) => {
         if (props.deleteable) return classes.deleteCard;
 
         return classes.fullHeight;
-    }
+    };
 
     const determineIcon = () => {
         if (props.edit) {
@@ -102,18 +102,18 @@ const SessionCard = (props: ISessionCard) => {
                 <Grid item>
                     <CreateIcon color="primary" />
                 </Grid>
-            )
+            );
         }
         if (props.deleteable) {
             return (
                 <Grid item>
                     <DeleteIcon color="secondary" />
                 </Grid>
-            )
+            );
         }
 
-        return (<></>)
-    }
+        return <></>;
+    };
 
     const determineOnClick = () => {
         if (props.edit) {
@@ -121,22 +121,20 @@ const SessionCard = (props: ISessionCard) => {
         } else if (props.deleteable) {
             setOpenDelete(true);
         } else {
-            history.push(`/client/${props.session.id}`)
+            history.push(`/client/${props.session.id}`);
         }
-    }
+    };
 
     const updateSession = (session: ISessionInfo) => {
         console.log("---");
         console.log(session);
         props.update(session);
-    }
+    };
 
     return (
         <>
             <Grid item xs={12} sm={6} md={4} key={props.session.id}>
-                <Card
-                    className={determineStyle()}
-                >
+                <Card className={determineStyle()}>
                     <CardActionArea
                         className={classes.fullHeight}
                         onClick={determineOnClick}
@@ -160,7 +158,7 @@ const SessionCard = (props: ISessionCard) => {
                                 {determineIcon()}
                             </Grid>
                             <Typography gutterBottom>
-                                Hostname: {props.session.hostname}, User:{" "}
+                                Hostname: {props.session.hostname}, Username:{" "}
                                 {props.session.username}
                             </Typography>
                             <Typography
@@ -174,13 +172,14 @@ const SessionCard = (props: ISessionCard) => {
                     </CardActionArea>
                 </Card>
                 <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
-                    <DialogTitle>Server entfernen</DialogTitle>
+                    <DialogTitle>Remove Session</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Sind Sie sich sicher, dass sie den Server '
-                        {props.session.hostname}' löschen wollen? Es werden alle
-                        Daten bezüglich der Verbindung gelöscht!
-                    </DialogContentText>
+                            Are you sure you want to remove the session '
+                            {props.session.title}'? This operation is
+                            irreversible and deletes all data associated with
+                            the session.
+                        </DialogContentText>
                     </DialogContent>
                     <DialogActions>
                         <Button
@@ -188,15 +187,15 @@ const SessionCard = (props: ISessionCard) => {
                             color="secondary"
                             onClick={() => setOpenDelete(false)}
                         >
-                            Abbrechen
-                    </Button>
+                            Cancel
+                        </Button>
                         <Button
                             variant="contained"
                             color="primary"
                             onClick={() => removeSession(props.session.id)}
                         >
-                            Löschen
-                    </Button>
+                            Remove
+                        </Button>
                     </DialogActions>
                 </Dialog>
             </Grid>

@@ -41,7 +41,7 @@ const AddSession = (props: IAddSession) => {
     const [open, setOpen] = useState(false);
     const [inputs, setInputs] = useState({
         hostname: "",
-        username: "",
+        username: "root",
         password: "",
         description: "",
         title: "",
@@ -67,7 +67,7 @@ const AddSession = (props: IAddSession) => {
     const refreshModal = () => {
         setInputs({
             hostname: "",
-            username: "",
+            username: "root",
             password: "",
             description: "",
             title: "",
@@ -115,11 +115,12 @@ const AddSession = (props: IAddSession) => {
             >
                 <form onSubmit={(e) => addSession(e)}>
                     <DialogTitle id="form-dialog-title">
-                        Server hinzufügen
+                        Add Session
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText className={classes.dialogText}>
-                            Cooler Text über Server und Zeug
+                            Provide the following information to identify the
+                            host and authenticate.
                         </DialogContentText>
                         <Grid
                             container
@@ -178,18 +179,19 @@ const AddSession = (props: IAddSession) => {
                                 />
                             </Grid>
                         </Grid>
-                        <DialogContentText
-                            className={classes.dialogText}
-                            style={{ marginTop: "24px" }}
-                        >
-                            Geben Sie ihrer Session einen Namen, um ihn besser
-                            zu identifizieren!
+                    </DialogContent>
+                    <DialogTitle>Details</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={classes.dialogText}>
+                            Give the session a title and optionally a
+                            description.
                         </DialogContentText>
                         <Grid
                             container
                             direction="row"
                             justify="center"
                             alignItems="flex-start"
+                            spacing={2}
                         >
                             <Grid item xs={12}>
                                 <TextField
@@ -204,12 +206,6 @@ const AddSession = (props: IAddSession) => {
                                 />
                             </Grid>
                         </Grid>
-                    </DialogContent>
-                    <DialogTitle>Details</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText className={classes.dialogText}>
-                            Weitere Details zum Server
-                        </DialogContentText>
                         <Grid
                             container
                             direction="row"
