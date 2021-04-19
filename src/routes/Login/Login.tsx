@@ -78,11 +78,10 @@ export default function Login({ setAuth }: ISetAuth) {
             })
             .catch((err) => {
                 setAuth(false);
-                if (err.response) {
-                    if (err.response.status === 401) {
-                        toast.error("Username or password wrong");
-                    }
+                if (err.response && err.response.status === 401) {
+                    toast.error("Username or password wrong");
                 } else {
+                    toast.error(err.message);
                     console.error(err.message);
                 }
             });

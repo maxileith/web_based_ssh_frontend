@@ -9,7 +9,6 @@ import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 import { IconButton, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import StorageIcon from "@material-ui/icons/Storage";
-import { useCookies } from "react-cookie";
 import PersonIcon from "@material-ui/icons/Person";
 
 const StyledMenu = withStyles({
@@ -37,8 +36,6 @@ interface IUserMenu {
 }
 
 export default function CustomizedMenus({ setAuth }: IUserMenu) {
-    const [cookies, setCookie, removeCookie] = useCookies([""]);
-
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -51,7 +48,6 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
 
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        removeCookie("token");
         localStorage.removeItem("token");
         setAuth(false);
     };
@@ -79,13 +75,13 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
                     <ListItemIcon>
                         <PersonIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText primary="Person" />
+                    <ListItemText primary="Personal Data" />
                 </MenuItem>
                 <MenuItem component={Link} to="/">
                     <ListItemIcon>
                         <StorageIcon fontSize="small" />
                     </ListItemIcon>
-                    <ListItemText primary="Session" />
+                    <ListItemText primary="Saved Sessions" />
                 </MenuItem>
                 <MenuItem onClick={(e) => logout(e)}>
                     <ListItemIcon>

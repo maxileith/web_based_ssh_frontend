@@ -5,20 +5,11 @@ import {
     Grid,
     makeStyles,
     Typography,
-    TextField,
-    IconButton,
-    Dialog,
-    DialogTitle,
-    DialogContent,
-    DialogContentText,
-    Button,
-    DialogActions,
 } from "@material-ui/core";
-import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useHistory } from "react-router";
 import Headbar from "../../components/Headbar/Headbar";
 import Term from "../../components/Terminal/Term";
-import CreateIcon from "@material-ui/icons/Create";
 import { ISessionInfo } from "../../components/SessionCard/SessionCard";
 import API from "../../Api";
 
@@ -165,7 +156,7 @@ export default function Client({ match }: any, props: IClient) {
                                 <Typography>
                                     <b>Hostname:</b> {session.hostname}
                                     <br />
-                                    <b>User:</b> {session.username}
+                                    <b>Username:</b> {session.username}
                                 </Typography>
                             </CardContent>
                         </Card>
@@ -244,7 +235,7 @@ export default function Client({ match }: any, props: IClient) {
                                     Cancel
                                 </Button>
                                 <Button type="submit" color="primary">
-                                    Update
+                                    Save
                                 </Button>
                             </DialogActions>
                         </form>

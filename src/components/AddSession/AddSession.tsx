@@ -16,6 +16,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
+import { ISessionInfo } from "../SessionCard/ConfigSessionModal";
 
 const useStyles = makeStyles((theme) => ({
     absolute: {
@@ -31,12 +32,16 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const AddSession = () => {
+interface IAddSession {
+    addSession: (session: ISessionInfo) => void;
+}
+
+const AddSession = (props: IAddSession) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
     const [inputs, setInputs] = useState({
         hostname: "",
-        username: "",
+        username: "root",
         password: "",
         description: "",
         title: "",
@@ -62,7 +67,7 @@ const AddSession = () => {
     const refreshModal = () => {
         setInputs({
             hostname: "",
-            username: "",
+            username: "root",
             password: "",
             description: "",
             title: "",
@@ -76,12 +81,18 @@ const AddSession = () => {
 
         API.post("saved_sessions/", inputs, { withCredentials: true })
             .then((res) => {
-                toast.success("Session erfolgreich hinzugefügt");
+                toast.success(res.data.message);
+                props.addSession(res.data.details);
+                refreshModal();
                 setOpen(false);
             })
             .catch((err) => {
+                if (err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
+                }
                 console.error(err.message);
-                toast.error("Session konnten nicht hinzugeführt werden");
             });
     };
 
@@ -104,11 +115,12 @@ const AddSession = () => {
             >
                 <form onSubmit={(e) => addSession(e)}>
                     <DialogTitle id="form-dialog-title">
-                        Server hinzufügen
+                        Add Session
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText className={classes.dialogText}>
-                            Cooler Text über Server und Zeug
+                            Provide the following information to identify the
+                            host and authenticate.
                         </DialogContentText>
                         <Grid
                             container
@@ -167,18 +179,19 @@ const AddSession = () => {
                                 />
                             </Grid>
                         </Grid>
-                        <DialogContentText
-                            className={classes.dialogText}
-                            style={{ marginTop: "24px" }}
-                        >
-                            Geben Sie ihrer Session einen Namen, um ihn besser
-                            zu identifizieren!
+                    </DialogContent>
+                    <DialogTitle>Details</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText className={classes.dialogText}>
+                            Give the session a title and optionally a
+                            description.
                         </DialogContentText>
                         <Grid
                             container
                             direction="row"
                             justify="center"
                             alignItems="flex-start"
+                            spacing={2}
                         >
                             <Grid item xs={12}>
                                 <TextField
@@ -193,12 +206,6 @@ const AddSession = () => {
                                 />
                             </Grid>
                         </Grid>
-                    </DialogContent>
-                    <DialogTitle>Details</DialogTitle>
-                    <DialogContent>
-                        <DialogContentText className={classes.dialogText}>
-                            Weitere Details zum Server
-                        </DialogContentText>
                         <Grid
                             container
                             direction="row"

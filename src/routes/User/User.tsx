@@ -6,6 +6,8 @@ import {
     TextField,
     Button,
     TextareaAutosize,
+    Checkbox,
+    FormControlLabel,
 } from "@material-ui/core";
 import { ChangeEvent, FormEvent, Fragment, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -47,10 +49,11 @@ interface ISetAuth {
 
 export default function Client({ setAuth }: ISetAuth) {
     const classes = useStyles();
-    const [loading, setLoading] = useState(true);
+    // const [loading, setLoading] = useState(true);
     const [sshKeys, setSshKeys] = useState("");
     const [sshInput, setSshInput] = useState("");
     const [passwordError, setPasswordError] = useState(false);
+    const [changePassword, setChangePassword] = useState(false);
     const [userInfo, setUserInfo] = useState({
         last_name: "",
         first_name: "",
@@ -71,6 +74,10 @@ export default function Client({ setAuth }: ISetAuth) {
         password,
         password2,
     } = inputs;
+
+    const handlePasswordChange = () => {
+        setChangePassword(!changePassword);
+    };
 
     const onSshChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -114,27 +121,36 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const onSubmitChanges = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
-        if (old_password && password && password2) {
-            if (password !== password2) {
-                toast.error(
-                    "Das neue PAsswort wurde nicht korrekt wiederholt!"
-                );
-            } else {
-                // API call für Passwort-Änderung
+        let updates = {};
+        if (first_name !== userInfo.first_name) {
+            updates = { first_name: first_name };
+        }
+        if (last_name !== userInfo.last_name) {
+            updates = { ...updates, last_name: last_name };
+        }
+        if (email !== userInfo.email) {
+            updates = { ...updates, email: email };
+        }
+        if (changePassword) {
+            if (password === password2) {
+                updates = {
+                    ...updates,
+                    old_password: old_password,
+                    password: password,
+                };
             }
-        } else if (old_password || password || password2) {
-            toast.warning(
-                "Wenn sie ihr Passwort ändern wollen, müssen sie alle Felder ausfüllen!"
-            );
-        } else if (
-            last_name !== userInfo.last_name ||
-            first_name !== userInfo.first_name ||
-            email !== userInfo.email
-        ) {
-            //API call für Änderungen
+        }
+        if (Object.keys(updates).length > 0) {
+            API.patch("/personal_data/", updates)
+                .then((res) => {
+                    toast.success("Updated personal data successfully!");
+                })
+                .catch((err) => {
+                    console.error(err.message);
+                    toast.error("Changes could not be saved!");
+                });
         } else {
-            toast.warning("Es wurden keine Änderungen vorgenommen!");
+            toast.warning("There are no changes to save!");
         }
     };
 
@@ -185,7 +201,7 @@ export default function Client({ setAuth }: ISetAuth) {
             <Headbar setAuth={setAuth} />
             <Container>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Persönliche Daten
+                    Personal Data
                 </Typography>
                 <form onSubmit={(e) => onSubmitChanges(e)}>
                     <Grid
@@ -200,7 +216,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="first_name"
                                 id="first_name"
-                                label="Vorname"
+                                label="Forename"
                                 value={first_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
@@ -212,7 +228,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="last_name"
                                 id="last_name"
-                                label="Nachname"
+                                label="Surname"
                                 value={last_name}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
@@ -234,9 +250,9 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                         <Grid item xs={12}>
                             <Typography>
-                                Um ihr Passwort zu ändern, gaben sie bitte ihr
-                                Passwort ein, suche sie sich ein Neues aus und
-                                wiederholen sie es.
+                                To change your password, please enter your
+                                current password, choose a new one and repeat
+                                it.
                             </Typography>
                         </Grid>
                         <Grid item xs={12}>
@@ -244,7 +260,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="old_password"
                                 id="old_password"
-                                label="Passwort"
+                                label="Current Password"
                                 type="password"
                                 value={old_password}
                                 onChange={(e) => onInputChanges(e)}
@@ -256,7 +272,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="password"
                                 id="password"
-                                label="Neues Passwort"
+                                label="New Password"
                                 type="password"
                                 value={password}
                                 onChange={(e) => onInputChanges(e)}
@@ -268,12 +284,24 @@ export default function Client({ setAuth }: ISetAuth) {
                                 variant="outlined"
                                 name="password2"
                                 id="password2"
-                                label="Neues Passwort wiederholen"
+                                label="Repeat new Password"
                                 type="password"
                                 value={password2}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
                                 error={passwordError}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={changePassword}
+                                        onChange={handlePasswordChange}
+                                        color="primary"
+                                    />
+                                }
+                                label="I want to change my password"
                             />
                         </Grid>
                     </Grid>
