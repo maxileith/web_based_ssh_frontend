@@ -104,11 +104,12 @@ export default function ConfigSessionModal(props: IConfigModal) {
                     toast.success(res.data.message);
                 })
                 .catch((err) => {
-                    if (err.response) {
-                        if (err.response.data) {
-                            toast.error(err.response.data.message);
-                        }
+                    if (err.response && err.response.data) {
+                        toast.error(err.response.data.message);
+                    } else {
+                        toast.error(err.message);
                     }
+                    console.error(err.message);
                 });
             // Add api-call to update informations
         } else {

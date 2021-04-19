@@ -57,10 +57,10 @@ export default function Dashboard(props: IDashboard) {
                 console.log(data.data["sessions"]);
             })
             .catch((err) => {
-                if (err.response) {
-                    if (err.response.data) {
-                        toast.error(err.response.data.message);
-                    }
+                if (err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
                 }
                 console.error(err.message);
             });

@@ -87,12 +87,12 @@ const AddSession = (props: IAddSession) => {
                 setOpen(false);
             })
             .catch((err) => {
-                console.error(err.message);
-                if (err.response) {
-                    if (err.response.data) {
-                        toast.error(err.response.data.message);
-                    }
+                if (err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
                 }
+                console.error(err.message);
             });
     };
 

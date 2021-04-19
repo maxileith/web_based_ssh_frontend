@@ -48,11 +48,10 @@ const Register = ({ setAuth }: IRegister) => {
                 }
             })
             .catch((err) => {
-                if (err.response) {
-                    if (err.response.status === 401) {
-                        toast.error(err.response.data);
-                    }
+                if (err.response && err.response.status === 401) {
+                    toast.error(err.response.data);
                 } else {
+                    toast.error(err.message);
                     console.error(err.message);
                 }
             });

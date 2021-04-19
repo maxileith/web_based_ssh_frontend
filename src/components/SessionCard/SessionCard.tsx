@@ -78,13 +78,13 @@ const SessionCard = (props: ISessionCard) => {
                 setOpenDelete(false);
             })
             .catch((err) => {
-                if (err.response) {
-                    if (err.response.data) {
-                        toast.error(err.response.data.message);
-                    }
+                if (err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
                 }
-                setOpenDelete(false);
                 console.error(err.message);
+                setOpenDelete(false);
             });
     };
 
