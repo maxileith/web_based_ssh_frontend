@@ -230,6 +230,7 @@ export default function Dashboard(props: IDashboard) {
                                     updateSession(index, session)
                                 }
                                 delete={() => deleteSession(index)}
+                                key={session.id}
                             />
                         )
                     )}
