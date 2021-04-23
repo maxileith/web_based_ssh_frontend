@@ -39,7 +39,7 @@ export default function Dashboard(props: IDashboard) {
     const updateSession = (index: number, session: ISessionInfo) => {
         let updatedSavedSessions = savedSessions.sessions;
         updatedSavedSessions[index] = session;
-        console.log(updatedSavedSessions);
+        // console.log(updatedSavedSessions);
         setSavedSessions({ sessions: updatedSavedSessions });
     };
 
@@ -54,15 +54,21 @@ export default function Dashboard(props: IDashboard) {
         API.get("saved_sessions/", { withCredentials: true })
             .then((data) => {
                 setSavedSessions({ sessions: data.data["sessions"] });
-                console.log(data.data["sessions"]);
+                // console.log(data.data["sessions"]);
             })
             .catch((err) => {
-                if (err.response && err.response.data) {
+                if (
+                    err.response &&
+                    err.response.data &&
+                    err.response.status == 404
+                ) {
+                    toast.warning(err.response.data.message);
+                } else if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
+                    console.error(err.message);
                 }
-                console.error(err.message);
             });
     }, []);
 

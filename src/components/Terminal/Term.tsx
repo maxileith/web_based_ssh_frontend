@@ -80,7 +80,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     onResize = (event: { cols: number; rows: number }) => {
         const json = JSON.stringify({ resize: [event.cols, event.rows] });
-        console.log(json);
+        // console.log(json);
         if (this.ws) this.ws.send(json);
     };
 

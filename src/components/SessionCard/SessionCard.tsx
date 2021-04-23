@@ -82,8 +82,8 @@ const SessionCard = (props: ISessionCard) => {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
+                    console.error(err.message);
                 }
-                console.error(err.message);
                 setOpenDelete(false);
             });
     };
@@ -126,8 +126,8 @@ const SessionCard = (props: ISessionCard) => {
     };
 
     const updateSession = (session: ISessionInfo) => {
-        console.log("---");
-        console.log(session);
+        // console.log("---");
+        // console.log(session);
         props.update(session);
     };
 

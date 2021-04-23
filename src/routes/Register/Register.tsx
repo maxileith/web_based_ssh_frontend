@@ -42,14 +42,18 @@ const Register = ({ setAuth }: IRegister) => {
 
         API.post("auth/register/", body)
             .then((res) => {
-                if (res.data.token) {
-                    //localStorage.setItem('token', res.data.token);
-                    history.push("/login");
+                if (res.data && res.data.message) {
+                    toast.success(res.data.message);
                 }
+                history.push("/login");
             })
             .catch((err) => {
-                if (err.response && err.response.status === 401) {
-                    toast.error(err.response.data);
+                if (
+                    err.response &&
+                    err.response.data &&
+                    err.response.data.message
+                ) {
+                    toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
                     console.error(err.message);
