@@ -20,8 +20,12 @@ import User from "./routes/User/User";
 
 const theme = createMuiTheme({
     palette: {
-        primary: blue,
-        secondary: red,
+        primary: {
+            main: '#5e81ac',
+        },
+        secondary: {
+            main: '#bf616a',
+        },
     },
 });
 

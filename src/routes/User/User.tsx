@@ -41,6 +41,9 @@ const useStyles = makeStyles((theme) => ({
     button: {
         width: "96px",
     },
+    delete: {
+        marginTop: "32px",
+    },
 }));
 
 interface ISetAuth {
@@ -375,6 +378,9 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                     </Grid>
                 </form>
+                <Button fullWidth color="secondary" variant="contained" className={classes.delete}>
+                    Account Löschen
+                </Button>
             </Container>
         </Fragment>
     );

@@ -27,14 +27,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     deleteCard: {
         "&:hover": {
-            border: "2px solid #ff1744",
+            border: "2px solid #bf616a",
             margin: "-2px",
         },
         height: "100%",
     },
     editCard: {
         "&:hover": {
-            border: "2px solid #2196f3",
+            border: "2px solid #5e81ac",
             margin: "-2px",
         },
         height: "100%",
