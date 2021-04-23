@@ -175,7 +175,6 @@ const AddSession = (props: IAddSession) => {
                                     onChange={(e) => onChange(e)}
                                     value={password}
                                     fullWidth
-                                    required
                                 />
                             </Grid>
                         </Grid>

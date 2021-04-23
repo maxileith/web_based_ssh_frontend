@@ -40,7 +40,7 @@ const Register = ({ setAuth }: IRegister) => {
         const body = { first_name, last_name, email, password, username };
         console.log(body);
 
-        API.post("auth/register", body)
+        API.post("auth/register/", body)
             .then((res) => {
                 if (res.data.token) {
                     //localStorage.setItem('token', res.data.token);
