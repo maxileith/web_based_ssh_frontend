@@ -38,11 +38,11 @@ export default class Term extends React.Component<IProps, STerm> {
     componentDidMount() {
         this.ws = new WebSocket(
             "ws://" +
-                window.location.hostname +
-                ":8000/ws/ssh/" +
-                this.props.sessionId +
-                "?token=" +
-                localStorage.getItem("token")
+            window.location.hostname +
+            ":8000/ws/ssh/" +
+            this.props.sessionId +
+            "?token=" +
+            localStorage.getItem("token")
         );
 
         this.term.loadAddon(this.fitAddon);
@@ -59,6 +59,7 @@ export default class Term extends React.Component<IProps, STerm> {
         this.ws.onclose = () => {
             this.term.write("returning to dashboard ...");
             toast.warning("Returning to dashboard.", { pauseOnHover: false });
+            console.log(this.state);
             this.setState({
                 alreadyGone: setTimeout(() => {
                     this.props.history.push("/");
@@ -69,6 +70,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     componentWillUnmount() {
         this.term.dispose();
+        this.ws.onclose = () => {};
         this.ws.close();
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }

@@ -17,6 +17,7 @@ import Register from "./routes/Register/Register";
 import API from "./Api";
 import Verify from "./routes/Verify/Verify";
 import User from "./routes/User/User";
+import ClientWrapper from "./routes/Client/Clientwrapper"
 
 const theme = createMuiTheme({
     palette: {
@@ -102,7 +103,7 @@ function App() {
                             path="/client/:id"
                             render={(props) =>
                                 isAuthenticated ? (
-                                    <Client {...props} setAuth={setAuth} />
+                                    <ClientWrapper {...props} setAuth={setAuth} />
                                 ) : (
                                     <Redirect to="/login" />
                                 )
