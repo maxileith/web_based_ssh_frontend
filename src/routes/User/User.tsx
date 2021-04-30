@@ -32,11 +32,13 @@ const useStyles = makeStyles((theme) => ({
     editor: {
         width: "100%",
         background: "black",
-        color: "white",
-        fontFamily: "Ubuntu Mono, monospace",
+        /*fontFamily: "Ubuntu Mono, monospace",
         "&:focus": {
             outline: 0,
-        },
+        },*/
+    },
+    multilineColor: {
+        color: "white",
     },
     button: {
         width: "96px",
@@ -178,8 +180,25 @@ export default function Client({ setAuth }: ISetAuth) {
         }
     };
 
+    const deleteAccount = () => {
+        API.delete("/personal_data")
+            .then((res) => {
+                toast.success(res.data.message);
+                localStorage.removeItem("token");
+                setAuth(false);
+            })
+            .catch((err) => {
+                if(err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
+                    console.error(err.message);
+                }
+            })
+    }
+
     useEffect(() => {
-        API.get("/known_hosts/", { withCredentials: true })
+        API.get("/known_hosts/")
             .then((data) => {
                 setSshKeys(data.data["content"]);
                 setSshInput(data.data["content"]);
@@ -188,7 +207,7 @@ export default function Client({ setAuth }: ISetAuth) {
                 console.log(err.message);
                 toast.error("Failed to load known hosts.");
             });
-        API.get("/personal_data/", { withCredentials: true })
+        API.get("/personal_data/")
             .then((data) => {
                 setUserInfo(data.data);
                 setInputs(data.data);
@@ -341,13 +360,18 @@ export default function Client({ setAuth }: ISetAuth) {
                     Known hosts:
                 </Typography>
                 <form onSubmit={(e) => onSshSubmit(e)}>
-                    <TextareaAutosize
-                        rowsMin={20}
+                    <TextField
+                        multiline
+                        rows={20}
                         rowsMax={20}
+                        InputProps={{
+                            className: classes.multilineColor
+                        }}
                         className={classes.editor}
                         spellCheck={false}
                         value={sshInput}
                         onChange={(e) => onSshChange(e)}
+                        
                     />
                     <Grid
                         container
@@ -378,7 +402,7 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                     </Grid>
                 </form>
-                <Button fullWidth color="secondary" variant="contained" className={classes.delete}>
+                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount}>
                     Account Löschen
                 </Button>
             </Container>

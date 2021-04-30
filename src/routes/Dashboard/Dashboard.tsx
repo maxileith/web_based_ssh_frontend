@@ -54,6 +54,7 @@ export default function Dashboard(props: IDashboard) {
         API.get("saved_sessions/", { withCredentials: true })
             .then((data) => {
                 setSavedSessions({ sessions: data.data["sessions"] });
+                localStorage.setItem("sessions", JSON.stringify(data.data["sessions"]));
                 console.log(data.data["sessions"]);
             })
             .catch((err) => {

@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 interface IProps {
     history: History<unknown>;
     sessionId: number;
+    clientCount: number;
 }
 
 interface STerm {
@@ -66,6 +67,10 @@ export default class Term extends React.Component<IProps, STerm> {
                 }, 5000),
             });
         };
+    }
+
+    componentDidUpdate() {
+        this.fitAddon.fit();
     }
 
     componentWillUnmount() {

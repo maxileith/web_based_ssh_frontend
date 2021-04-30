@@ -14,6 +14,7 @@ import API from "../../Api";
 
 interface IClient {
     id: number;
+    clientCount: number;
 }
 
 
@@ -95,7 +96,7 @@ export default function Client( props: IClient) {
                     </Grid>
                 </Grid>
 
-                <Term history={history} sessionId={sessionId} />
+                <Term history={history} sessionId={sessionId} clientCount={props.clientCount}/>
             </Container>
         </Fragment>
     );

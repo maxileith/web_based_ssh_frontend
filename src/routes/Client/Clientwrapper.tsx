@@ -1,26 +1,53 @@
-import { Container, Grid } from '@material-ui/core';
-import React, { Fragment } from 'react';
+import { Container, Grid, GridSize, GridSpacing } from '@material-ui/core';
+import React, { Fragment, useState } from 'react';
 import Headbar from '../../components/Headbar/Headbar';
 import Client from "./Client";
+import AddClient from "../../components/AddClient/AddClient";
+import { toast } from 'react-toastify';
 
 interface IClient {
   setAuth(bool: boolean): void;
 }
 
 export default function ClientWrapper({ match }: any, props: IClient) {
-  //const id1 = match.params.id1;
-  //const id2 = match.params.id2;
+  const id = match.params.id;
+  const [clientIds, setClientIds] = useState([id]);
+
+  let clientCount = clientIds.length;
+
+  let sizes: GridSize[];
+  if (clientCount === 1) {
+    sizes = [12];
+  } else if (clientCount === 2) {
+    sizes = [6, 6];
+  } else if (clientCount === 3) {
+    sizes = [6, 6, 12];
+  } else {
+    sizes = [6, 6, 6, 6];
+  }
+
+  const addClientId = (id: number) => {
+    if (clientCount < 4) {
+      setClientIds([...clientIds, id]);
+      clientCount += 1;
+    } else {
+      toast.warning("You cant have more than 4 clients at the time");
+    }
+  }
 
   return (
-  <Fragment>
-    <Headbar setAuth={props.setAuth} />
+    <Fragment>
+      <Headbar setAuth={props.setAuth} />
       <Grid container direction="row" spacing={2} alignItems="flex-start">
-        <Grid item xs={6}>
-          <Client id={1} />
-        </Grid>
-        <Grid item xs={6}>
-          <Client id={7} />
-        </Grid>
+        {
+          clientIds.map((client: number, index:number) => (
+            <Grid item xs={12} md={sizes[index]}>
+              <Client id={client} clientCount={clientCount}/>
+            </Grid>
+          ))
+        }
       </Grid>
-  </Fragment>)
+      <AddClient add={addClientId} />
+    </Fragment>
+  )
 }
