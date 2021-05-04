@@ -9,12 +9,12 @@ services:
         labels:
             traefik.enable: true
             traefik.http.routers.websshfrontend.entrypoints: http
-            traefik.http.routers.websshfrontend.rule: Host(`webssh.leith.de`)
+            traefik.http.routers.websshfrontend.rule: Host(`${URL_FRONTEND}`)
             traefik.http.routers.websshfrontend.middlewares: https-redirect@file
             traefik.http.routers.websshfrontend-secure.entrypoints: https
             traefik.http.services.websshfrontend-secure.loadbalancer.server.port: 80
             traefik.http.routers.websshfrontend-secure.middlewares: default-headers@file
-            traefik.http.routers.websshfrontend-secure.rule: Host(`webssh.leith.de`)
+            traefik.http.routers.websshfrontend-secure.rule: Host(`${URL_FRONTEND}`)
             traefik.http.routers.websshfrontend-secure.tls: true
             traefik.http.routers.websshfrontend-secure.tls.options: myTLSOptions@file
             traefik.http.routers.websshfrontend-secure.tls.certresolver: le
