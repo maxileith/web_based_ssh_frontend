@@ -18,6 +18,9 @@ services:
             traefik.http.routers.websshfrontend-secure.tls: true
             traefik.http.routers.websshfrontend-secure.tls.options: myTLSOptions@file
             traefik.http.routers.websshfrontend-secure.tls.certresolver: le
+        networks:
+            traefik_private:
+            traefik_public:
 
 networks:
     traefik_private:
