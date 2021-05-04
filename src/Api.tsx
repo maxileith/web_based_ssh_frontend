@@ -1,11 +1,9 @@
 import axios from "axios";
 
-let apiUrl;
+let apiUrl = "http://localhost:8000";
 
-if (window.location.href.includes(".ssh.")) {
-    apiUrl = "https://ssh."; // fancy url einfügen
-} else {
-    apiUrl = "http://localhost:8000";
+if (window.location.href.includes("webssh.")) {
+    apiUrl = "https://api.webssh.leith.de"; // fancy url einfügen
 }
 
 const instance = axios.create({
