@@ -22,23 +22,49 @@ const Register = ({ setAuth }: IRegister) => {
         email: "",
         username: "",
         password: "",
+        repeatPassword: "",
     });
 
     const history = useHistory();
     const classes = useStyles();
 
-    const { first_name, last_name, email, username, password } = inputs;
+    const [passwordError, setPasswordError] = useState(false);
+
+    const {
+        first_name,
+        last_name,
+        email,
+        username,
+        password,
+        repeatPassword,
+    } = inputs;
 
     const onChangeText = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setInputs({ ...inputs, [e.target.name]: e.target.value });
+        console.log(e.target.name);
+        if (e.target.name === "password" && e.target.value !== repeatPassword) {
+            setPasswordError(true);
+        } else if (
+            e.target.name === "repeatPassword" &&
+            e.target.value !== password
+        ) {
+            setPasswordError(true);
+        } else {
+            setPasswordError(false);
+        }
     };
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const body = { first_name, last_name, email, password, username };
         console.log(body);
+
+        if (passwordError) {
+            toast.error("The passwords do not match.");
+            return;
+        }
 
         API.post("auth/register/", body)
             .then((res) => {
@@ -126,6 +152,21 @@ const Register = ({ setAuth }: IRegister) => {
                             autoComplete="current-password"
                             value={password}
                             onChange={(e) => onChangeText(e)}
+                            error={passwordError}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="repeatPassword"
+                            label="Repeat Password"
+                            type="password"
+                            id="repeatPassword"
+                            autoComplete="current-password"
+                            value={repeatPassword}
+                            onChange={(e) => onChangeText(e)}
+                            error={passwordError}
                         />
                         <Button
                             type="submit"

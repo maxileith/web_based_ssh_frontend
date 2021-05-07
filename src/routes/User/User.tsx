@@ -196,14 +196,14 @@ export default function Client({ setAuth }: ISetAuth) {
                 setAuth(false);
             })
             .catch((err) => {
-                if(err.response && err.response.data) {
+                if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
                     console.error(err.message);
                 }
-            })
-    }
+            });
+    };
 
     useEffect(() => {
         API.get("/known_hosts/")
@@ -307,6 +307,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 value={password}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
+                                error={passwordError}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -373,13 +374,12 @@ export default function Client({ setAuth }: ISetAuth) {
                         rows={20}
                         rowsMax={20}
                         InputProps={{
-                            className: classes.multilineColor
+                            className: classes.multilineColor,
                         }}
                         className={classes.editor}
                         spellCheck={false}
                         value={sshInput}
                         onChange={(e) => onSshChange(e)}
-                        
                     />
                     <Grid
                         container
@@ -410,7 +410,13 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                     </Grid>
                 </form>
-                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount}>
+                <Button
+                    fullWidth
+                    color="secondary"
+                    variant="contained"
+                    className={classes.delete}
+                    onClick={deleteAccount}
+                >
                     Account Löschen
                 </Button>
             </Container>
