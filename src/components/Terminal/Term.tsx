@@ -9,6 +9,7 @@ import { wsUrl } from "../../Api";
 interface IProps {
     history: History<unknown>;
     sessionId: number;
+    clientCount: number;
 }
 
 interface STerm {
@@ -59,6 +60,7 @@ export default class Term extends React.Component<IProps, STerm> {
         this.ws.onclose = () => {
             this.term.write("returning to dashboard ...");
             toast.warning("Returning to dashboard.", { pauseOnHover: false });
+            console.log(this.state);
             this.setState({
                 alreadyGone: setTimeout(() => {
                     this.props.history.push("/");
@@ -67,8 +69,13 @@ export default class Term extends React.Component<IProps, STerm> {
         };
     }
 
+    componentDidUpdate() {
+        this.fitAddon.fit();
+    }
+
     componentWillUnmount() {
         this.term.dispose();
+        this.ws.onclose = () => {};
         this.ws.close();
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }
