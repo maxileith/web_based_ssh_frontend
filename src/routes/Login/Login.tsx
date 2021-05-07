@@ -151,7 +151,10 @@ export default function Login({ setAuth }: ISetAuth) {
                             Sign In
                         </Button>
                     </form>
-                    <Link onClick={() => history.push("/register")}>
+                    <Link
+                        onClick={() => history.push("/register")}
+                        style={{ cursor: "pointer" }}
+                    >
                         Register
                     </Link>
                 </div>
