@@ -4,13 +4,15 @@ import Headbar from '../../components/Headbar/Headbar';
 import Client from "./Client";
 import AddClient from "../../components/AddClient/AddClient";
 import { toast } from 'react-toastify';
+import { useHistory } from 'react-router';
 
 interface IClient {
   setAuth(bool: boolean): void;
+  match: any;
 }
 
-export default function ClientWrapper({ match }: any, props: IClient) {
-  const id = match.params.id;
+export default function ClientWrapper(props: IClient) {
+  const id = props.match.params.id;
   const [clientIds, setClientIds] = useState([id]);
 
   let clientCount = clientIds.length;
@@ -50,7 +52,7 @@ export default function ClientWrapper({ match }: any, props: IClient) {
         {
           clientIds.map((client: number, index:number) => (
             <Grid item xs={12} md={sizes[index]}>
-              <Client id={client} clientCount={clientCount} selfDestroy={remove_client} index={index}/>
+              <Client id={client} clientCount={clientCount} selfDestroy={remove_client} index={index} />
             </Grid>
           ))
         }
