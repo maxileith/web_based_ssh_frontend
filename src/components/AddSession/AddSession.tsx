@@ -91,8 +91,8 @@ const AddSession = (props: IAddSession) => {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
+                    console.error(err.message);
                 }
-                console.error(err.message);
             });
     };
 
@@ -175,7 +175,6 @@ const AddSession = (props: IAddSession) => {
                                     onChange={(e) => onChange(e)}
                                     value={password}
                                     fullWidth
-                                    required
                                 />
                             </Grid>
                         </Grid>

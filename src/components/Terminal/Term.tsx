@@ -4,6 +4,7 @@ import { FitAddon } from "xterm-addon-fit";
 import "../../components/Terminal/terminal.css";
 import { History } from "history";
 import { toast } from "react-toastify";
+import { wsUrl } from "../../Api";
 
 interface IProps {
     history: History<unknown>;
@@ -38,12 +39,11 @@ export default class Term extends React.Component<IProps, STerm> {
 
     componentDidMount() {
         this.ws = new WebSocket(
-            "ws://" +
-            window.location.hostname +
-            ":8000/ws/ssh/" +
-            this.props.sessionId +
-            "?token=" +
-            localStorage.getItem("token")
+            wsUrl +
+                "/ws/ssh/" +
+                this.props.sessionId +
+                "?token=" +
+                localStorage.getItem("token")
         );
 
         this.term.loadAddon(this.fitAddon);
@@ -87,7 +87,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     onResize = (event: { cols: number; rows: number }) => {
         const json = JSON.stringify({ resize: [event.cols, event.rows] });
-        console.log(json);
+        // console.log(json);
         if (this.ws) this.ws.send(json);
     };
 

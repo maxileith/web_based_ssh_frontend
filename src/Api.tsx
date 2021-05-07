@@ -1,12 +1,17 @@
 import axios from "axios";
 
-let apiUrl;
+let url = "localhost:8000";
+let protocol = "http://";
+let ws_protocol = "ws://";
 
-if (window.location.href.includes(".ssh.")) {
-    apiUrl = "https://ssh."; // fancy url einfügen
-} else {
-    apiUrl = "http://localhost:8000";
+if (window.location.href.includes("webssh.")) {
+    url = "api.webssh.leith.de"; // fancy url einfügen
+    protocol = "https://";
+    ws_protocol = "wss://";
 }
+
+let apiUrl = protocol + url;
+export let wsUrl = ws_protocol + url;
 
 const instance = axios.create({
     baseURL: apiUrl,

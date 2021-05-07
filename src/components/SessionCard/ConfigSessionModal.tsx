@@ -108,12 +108,12 @@ export default function ConfigSessionModal(props: IConfigModal) {
                         toast.error(err.response.data.message);
                     } else {
                         toast.error(err.message);
+                        console.error(err.message);
                     }
-                    console.error(err.message);
                 });
             // Add api-call to update informations
         } else {
-            console.log("no updates");
+            toast.success("No changes to apply.");
         }
         props.setOpen(false);
     };

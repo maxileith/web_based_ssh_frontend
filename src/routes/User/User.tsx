@@ -151,8 +151,16 @@ export default function Client({ setAuth }: ISetAuth) {
                     toast.success("Updated personal data successfully!");
                 })
                 .catch((err) => {
-                    console.error(err.message);
-                    toast.error("Changes could not be saved!");
+                    if (
+                        err.response &&
+                        err.response.data &&
+                        err.response.data.message
+                    ) {
+                        toast.error(err.response.data.message);
+                    } else {
+                        toast.error(err.message);
+                        console.error(err.message);
+                    }
                 });
         } else {
             toast.warning("There are no changes to save!");
