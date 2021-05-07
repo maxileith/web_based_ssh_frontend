@@ -35,6 +35,14 @@ export default function ClientWrapper({ match }: any, props: IClient) {
     }
   }
 
+  const remove_client = (index: number) => {
+    let ids = [...clientIds];
+    console.log(ids);
+    ids.splice(index, 1);
+    console.log(ids);
+    setClientIds(ids);
+  }
+
   return (
     <Fragment>
       <Headbar setAuth={props.setAuth} />
@@ -42,7 +50,7 @@ export default function ClientWrapper({ match }: any, props: IClient) {
         {
           clientIds.map((client: number, index:number) => (
             <Grid item xs={12} md={sizes[index]}>
-              <Client id={client} clientCount={clientCount}/>
+              <Client id={client} clientCount={clientCount} selfDestroy={remove_client} index={index}/>
             </Grid>
           ))
         }
