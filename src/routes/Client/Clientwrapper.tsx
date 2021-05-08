@@ -50,9 +50,7 @@ export default function ClientWrapper(props: IClient) {
 
     const remove_client = (index: number) => {
         let ids = [...clientIds];
-        console.log(ids);
         ids.splice(index, 1);
-        console.log(ids);
         setClientIds(ids);
     };
 

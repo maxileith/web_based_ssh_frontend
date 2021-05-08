@@ -96,7 +96,6 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(e);
         const body = {
             content: sshInput,
         };
@@ -106,7 +105,6 @@ export default function Client({ setAuth }: ISetAuth) {
                 setSshKeys(sshInput);
             })
             .catch((err) => {
-                console.log(err.message);
                 toast.error("Failed to save known hosts.");
             });
 
@@ -212,7 +210,6 @@ export default function Client({ setAuth }: ISetAuth) {
                 setSshInput(data.data["content"]);
             })
             .catch((err) => {
-                console.log(err.message);
                 toast.error("Failed to load known hosts.");
             });
         API.get("/personal_data/")
@@ -221,7 +218,6 @@ export default function Client({ setAuth }: ISetAuth) {
                 setInputs(data.data);
             })
             .catch((err) => {
-                console.log(err.message);
                 toast.error("Failed to load personal details.");
             });
     }, []);

@@ -126,8 +126,6 @@ const SessionCard = (props: ISessionCard) => {
     };
 
     const updateSession = (session: ISessionInfo) => {
-        // console.log("---");
-        // console.log(session);
         props.update(session);
     };
 

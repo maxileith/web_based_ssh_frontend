@@ -43,7 +43,6 @@ const Register = ({ setAuth }: IRegister) => {
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setInputs({ ...inputs, [e.target.name]: e.target.value });
-        console.log(e.target.name);
         if (e.target.name === "password" && e.target.value !== repeatPassword) {
             setPasswordError(true);
         } else if (
@@ -59,7 +58,6 @@ const Register = ({ setAuth }: IRegister) => {
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const body = { first_name, last_name, email, password, username };
-        console.log(body);
 
         if (passwordError) {
             toast.error("The passwords do not match.");

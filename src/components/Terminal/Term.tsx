@@ -42,10 +42,10 @@ export default class Term extends React.Component<IProps, STerm> {
     componentDidMount() {
         this.ws = new WebSocket(
             wsUrl +
-            "/ws/ssh/" +
-            this.props.sessionId +
-            "?token=" +
-            localStorage.getItem("token")
+                "/ws/ssh/" +
+                this.props.sessionId +
+                "?token=" +
+                localStorage.getItem("token")
         );
 
         this.term.loadAddon(this.fitAddon);
@@ -62,15 +62,15 @@ export default class Term extends React.Component<IProps, STerm> {
         this.ws.onclose = () => {
             if (this.props.clientCount === 1) {
                 this.term.write("returning to dashboard ...");
-                toast.warning("Returning to dashboard.", { pauseOnHover: false });
-                console.log(this.state);
+                toast.warning("Returning to dashboard.", {
+                    pauseOnHover: false,
+                });
                 this.setState({
                     alreadyGone: setTimeout(() => {
                         this.props.history.push("/");
                     }, 5000),
                 });
             } else {
-                console.log(this.props.index);
                 this.props.selfDestroy(this.props.index);
             }
         };
@@ -82,7 +82,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     componentWillUnmount() {
         this.term.dispose();
-        this.ws.onclose = () => { };
+        this.ws.onclose = () => {};
         this.ws.close();
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }
@@ -94,7 +94,6 @@ export default class Term extends React.Component<IProps, STerm> {
 
     onResize = (event: { cols: number; rows: number }) => {
         const json = JSON.stringify({ resize: [event.cols, event.rows] });
-        // console.log(json);
         if (this.ws) this.ws.send(json);
     };
 
