@@ -10,17 +10,17 @@ interface IClient {
     match: any;
 }
 
-interface ITab {
+interface IScreen {
     sessionID: number;
     screenID: number;
 }
 
 export default function ClientWrapper(props: IClient) {
-    let terminalCounter = 0;
+    let [terminalCounter, setTerminalCounter] = useState(2);
 
     const id = props.match.params.id;
     const [clientIds, setClientIds] = useState([
-        { sessionID: id, screenID: ++terminalCounter } as ITab,
+        { sessionID: id, screenID: 1 } as IScreen,
     ]);
 
     let clientCount = clientIds.length;
@@ -40,9 +40,10 @@ export default function ClientWrapper(props: IClient) {
         if (clientCount < 4) {
             setClientIds([
                 ...clientIds,
-                { sessionID: id, screenID: ++terminalCounter },
+                { sessionID: id, screenID: terminalCounter },
             ]);
             clientCount += 1;
+            setTerminalCounter(terminalCounter + 1);
         } else {
             toast.warning("You can't have more than 4 clients at the time.");
         }
@@ -58,7 +59,7 @@ export default function ClientWrapper(props: IClient) {
         <Fragment>
             <Headbar setAuth={props.setAuth} />
             <Grid container direction="row" spacing={2} alignItems="flex-start">
-                {clientIds.map((client: ITab, index: number) => (
+                {clientIds.map((client: IScreen, index: number) => (
                     <Grid item xs={12} md={sizes[index]} key={client.screenID}>
                         <Client
                             id={client.sessionID}
