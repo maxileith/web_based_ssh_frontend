@@ -15,6 +15,8 @@ import API from "../../Api";
 interface IClient {
     id: number;
     clientCount: number;
+    selfDestroy: (index: number) => void;
+    index: number;
 }
 
 
@@ -96,7 +98,7 @@ export default function Client( props: IClient) {
                     </Grid>
                 </Grid>
 
-                <Term history={history} sessionId={sessionId} clientCount={props.clientCount}/>
+                <Term history={history} sessionId={sessionId} clientCount={props.clientCount} selfDestroy={props.selfDestroy} index={props.index}/>
             </Container>
         </Fragment>
     );

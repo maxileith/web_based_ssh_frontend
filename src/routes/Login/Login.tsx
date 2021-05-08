@@ -71,7 +71,6 @@ export default function Login({ setAuth }: ISetAuth) {
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // console.log(inputs);
 
         const body = { username, password };
 

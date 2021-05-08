@@ -10,6 +10,8 @@ interface IProps {
     history: History<unknown>;
     sessionId: number;
     clientCount: number;
+    selfDestroy: (index: number) => void;
+    index: number;
 }
 
 interface STerm {
@@ -40,10 +42,10 @@ export default class Term extends React.Component<IProps, STerm> {
     componentDidMount() {
         this.ws = new WebSocket(
             wsUrl +
-                "/ws/ssh/" +
-                this.props.sessionId +
-                "?token=" +
-                localStorage.getItem("token")
+            "/ws/ssh/" +
+            this.props.sessionId +
+            "?token=" +
+            localStorage.getItem("token")
         );
 
         this.term.loadAddon(this.fitAddon);
@@ -58,14 +60,19 @@ export default class Term extends React.Component<IProps, STerm> {
         };
 
         this.ws.onclose = () => {
-            this.term.write("returning to dashboard ...");
-            toast.warning("Returning to dashboard.", { pauseOnHover: false });
-            console.log(this.state);
-            this.setState({
-                alreadyGone: setTimeout(() => {
-                    this.props.history.push("/");
-                }, 5000),
-            });
+            if (this.props.clientCount === 1) {
+                this.term.write("returning to dashboard ...");
+                toast.warning("Returning to dashboard.", { pauseOnHover: false });
+                console.log(this.state);
+                this.setState({
+                    alreadyGone: setTimeout(() => {
+                        this.props.history.push("/");
+                    }, 5000),
+                });
+            } else {
+                console.log(this.props.index);
+                this.props.selfDestroy(this.props.index);
+            }
         };
     }
 
@@ -75,7 +82,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     componentWillUnmount() {
         this.term.dispose();
-        this.ws.onclose = () => {};
+        this.ws.onclose = () => { };
         this.ws.close();
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }

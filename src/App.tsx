@@ -1,16 +1,15 @@
 import { createMuiTheme, ThemeProvider } from "@material-ui/core";
-import { blue, red } from "@material-ui/core/colors";
 import React, { useEffect, useState } from "react";
 import {
     BrowserRouter as Router,
     Switch,
     Route,
     Redirect,
+    useHistory,
 } from "react-router-dom";
 import LoadingIndicator from "./components/LoadingIndicator/LoadingIndicator";
 import Login from "./routes/Login/Login";
 import Dashboard from "./routes/Dashboard/Dashboard";
-import Client from "./routes/Client/Client";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Register from "./routes/Register/Register";

@@ -94,8 +94,8 @@ const AddClient = (props: IAddClient) => {
             alignItems="center"
             spacing={2}
           >
-            {sessions.map((session: any) => (
-              <Grid item xs={6}>
+            {sessions.map((session: any, index: number) => (
+              <Grid item xs={6} key={index}>
                 <Card className={classes.fullHeight}>
                   <CardActionArea className={classes.fullHeight} onClick={() => addServer(session.id)}>
                     <CardContent>
