@@ -10,6 +10,8 @@ import { IconButton, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import StorageIcon from "@material-ui/icons/Storage";
 import PersonIcon from "@material-ui/icons/Person";
+import API from "../../Api";
+import { toast } from "react-toastify";
 
 const StyledMenu = withStyles({
     paper: {
@@ -48,7 +50,14 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
 
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        localStorage.removeItem("token");
+        API.post("auth/logout/")
+            .then(() => {
+                localStorage.removeItem("token");
+                toast.success("See you next time!");
+            })
+            .catch(() => {
+                toast.error("Logout failed!");
+            })
         setAuth(false);
     };
 

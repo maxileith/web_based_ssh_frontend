@@ -63,12 +63,14 @@ const SessionCard = (props: ISessionCard) => {
     const history = useHistory();
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     const ChangeOpenEdit = (bool: boolean) => {
         setOpenEdit(bool);
     };
 
     const removeSession = (sessionId: number) => {
+        setDisable(true);
         API.delete("saved_sessions/details/" + sessionId, {
             withCredentials: true,
         })
@@ -78,6 +80,7 @@ const SessionCard = (props: ISessionCard) => {
                 setOpenDelete(false);
             })
             .catch((err) => {
+                setDisable(false);
                 if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
@@ -193,6 +196,7 @@ const SessionCard = (props: ISessionCard) => {
                             variant="contained"
                             color="primary"
                             onClick={() => removeSession(props.session.id)}
+                            disabled={disable}
                         >
                             Remove
                         </Button>

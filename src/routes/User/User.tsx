@@ -5,7 +5,6 @@ import {
     Typography,
     TextField,
     Button,
-    TextareaAutosize,
     Checkbox,
     FormControlLabel,
 } from "@material-ui/core";
@@ -32,13 +31,11 @@ const useStyles = makeStyles((theme) => ({
     editor: {
         width: "100%",
         background: "black",
-        /*fontFamily: "Ubuntu Mono, monospace",
-        "&:focus": {
-            outline: 0,
-        },*/
+        marginBottom: "1rem",
     },
     multilineColor: {
         color: "white",
+        fontFamily: "Ubuntu Mono, monospace",
     },
     button: {
         width: "96px",
@@ -70,6 +67,7 @@ export default function Client({ setAuth }: ISetAuth) {
         password: "",
         password2: "",
     });
+    const [disable, setDisable] = useState(false);
 
     const {
         last_name,
@@ -96,6 +94,7 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true)
         console.log(e);
         const body = {
             content: sshInput,
@@ -104,8 +103,10 @@ export default function Client({ setAuth }: ISetAuth) {
             .then(() => {
                 toast.success("Saved known hosts.");
                 setSshKeys(sshInput);
+                setDisable(false);
             })
             .catch((err) => {
+                setDisable(false);
                 console.log(err.message);
                 toast.error("Failed to save known hosts.");
             });
@@ -126,6 +127,7 @@ export default function Client({ setAuth }: ISetAuth) {
 
     const onSubmitChanges = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true);
         let updates = {};
         if (first_name !== userInfo.first_name) {
             updates = { first_name: first_name };
@@ -148,9 +150,11 @@ export default function Client({ setAuth }: ISetAuth) {
         if (Object.keys(updates).length > 0) {
             API.patch("/personal_data/", updates)
                 .then((res) => {
+                    setDisable(false);
                     toast.success("Updated personal data successfully!");
                 })
                 .catch((err) => {
+                    setDisable(false);
                     if (
                         err.response &&
                         err.response.data &&
@@ -163,6 +167,7 @@ export default function Client({ setAuth }: ISetAuth) {
                     }
                 });
         } else {
+            setDisable(false);
             toast.warning("There are no changes to save!");
         }
     };
@@ -189,13 +194,16 @@ export default function Client({ setAuth }: ISetAuth) {
     };
 
     const deleteAccount = () => {
+        setDisable(true);
         API.delete("/personal_data")
             .then((res) => {
+                setDisable(false);
                 toast.success(res.data.message);
                 localStorage.removeItem("token");
                 setAuth(false);
             })
             .catch((err) => {
+                setDisable(false);
                 if(err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
@@ -358,6 +366,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 color="primary"
                                 className={classes.button}
                                 type="submit"
+                                disabled={disable}
                             >
                                 Save
                             </Button>
@@ -404,13 +413,14 @@ export default function Client({ setAuth }: ISetAuth) {
                                 color="primary"
                                 className={classes.button}
                                 type="submit"
+                                disabled={disable}
                             >
                                 Save
                             </Button>
                         </Grid>
                     </Grid>
                 </form>
-                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount}>
+                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount} disabled={disable}>
                     Account Löschen
                 </Button>
             </Container>

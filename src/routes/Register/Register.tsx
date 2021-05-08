@@ -24,6 +24,8 @@ const Register = ({ setAuth }: IRegister) => {
         password: "",
     });
 
+    const [disable, setDisable] = useState(false);
+
     const history = useHistory();
     const classes = useStyles();
 
@@ -37,8 +39,9 @@ const Register = ({ setAuth }: IRegister) => {
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true);
+
         const body = { first_name, last_name, email, password, username };
-        console.log(body);
 
         API.post("auth/register/", body)
             .then((res) => {
@@ -48,6 +51,7 @@ const Register = ({ setAuth }: IRegister) => {
                 history.push("/login");
             })
             .catch((err) => {
+                setDisable(false);
                 if (
                     err.response &&
                     err.response.data &&
@@ -133,6 +137,7 @@ const Register = ({ setAuth }: IRegister) => {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            disabled={disable}
                         >
                             Register
                         </Button>

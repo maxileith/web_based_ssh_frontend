@@ -41,6 +41,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         port: props.session.port,
     });
     const [changePassword, setChangePassword] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     const { hostname, username, password, description, title, port } = inputs;
 
@@ -73,6 +74,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
 
     const updateServerInformations = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true);
         let newInformations = {};
         if (hostname !== props.session.hostname) {
             newInformations = { hostname: hostname };
@@ -102,8 +104,10 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 .then((res) => {
                     props.update(newSession);
                     toast.success(res.data.message);
+                    setDisable(false);
                 })
                 .catch((err) => {
+                    setDisable(false);
                     if (err.response && err.response.data) {
                         toast.error(err.response.data.message);
                     } else {
@@ -237,7 +241,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                     <Button onClick={refreshModal} color="primary">
                         Cancel
                     </Button>
-                    <Button type="submit" color="primary">
+                    <Button type="submit" color="primary" disabled={disable}>
                         Save
                     </Button>
                 </DialogActions>

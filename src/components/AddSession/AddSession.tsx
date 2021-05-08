@@ -47,6 +47,7 @@ const AddSession = (props: IAddSession) => {
         title: "",
         port: 22,
     });
+    const [disable, setDisable] = useState(false);
 
     const { hostname, username, password, description, title, port } = inputs;
 
@@ -78,6 +79,7 @@ const AddSession = (props: IAddSession) => {
 
     const addSession = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true);
 
         API.post("saved_sessions/", inputs, { withCredentials: true })
             .then((res) => {
@@ -87,6 +89,7 @@ const AddSession = (props: IAddSession) => {
                 setOpen(false);
             })
             .catch((err) => {
+                setDisable(false);
                 if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
@@ -229,7 +232,7 @@ const AddSession = (props: IAddSession) => {
                         <Button onClick={refreshModal} color="primary">
                             Cancel
                         </Button>
-                        <Button type="submit" color="primary">
+                        <Button type="submit" color="primary" disabled={disable}>
                             Add
                         </Button>
                     </DialogActions>
