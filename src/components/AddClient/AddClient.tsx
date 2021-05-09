@@ -1,10 +1,8 @@
 import {
-  Button,
   Card,
   CardActionArea,
   CardContent,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
@@ -12,14 +10,11 @@ import {
   Grid,
   IconButton,
   makeStyles,
-  TextField,
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import React, { useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
-import API from "../../Api";
-import { toast } from "react-toastify";
 
 interface IAddClient {
   add: (id: number) => void,
@@ -43,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+//used in Clientwrapper to add clients to view
 const AddClient = (props: IAddClient) => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
@@ -58,6 +54,7 @@ const AddClient = (props: IAddClient) => {
     setOpen(false);
   };
 
+  // adds the client id to the clientwrapper with the given function
   const addServer = (id: number) => {
     props.add(id);
     setOpen(false);

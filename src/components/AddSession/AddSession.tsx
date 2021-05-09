@@ -36,6 +36,7 @@ interface IAddSession {
     addSession: (session: ISessionInfo) => void;
 }
 
+// modal to add new session on dashboard
 const AddSession = (props: IAddSession) => {
     const classes = useStyles();
     const [open, setOpen] = useState(false);
@@ -65,6 +66,7 @@ const AddSession = (props: IAddSession) => {
         setInputs({ ...inputs, [e.target.id]: e.target.value });
     };
 
+    // set inputs to default
     const refreshModal = () => {
         setInputs({
             hostname: "",
@@ -77,13 +79,15 @@ const AddSession = (props: IAddSession) => {
         setOpen(false);
     };
 
+    // add session to database
     const addSession = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setDisable(true);
 
-        API.post("saved_sessions/", inputs, { withCredentials: true })
+        API.post("saved_sessions/", inputs)
             .then((res) => {
                 toast.success(res.data.message);
+                // add session to dashboard without reload
                 props.addSession(res.data.details);
                 refreshModal();
                 setOpen(false);

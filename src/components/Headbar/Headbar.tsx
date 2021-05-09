@@ -20,7 +20,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface Props {
-    children: React.ReactElement;
     setAuth(bool: boolean): void;
 }
 
@@ -28,7 +27,8 @@ interface ISetAuth {
     setAuth(bool: boolean): void;
 }
 
-function ElevationScroll(props: Props) {
+// elevates the headbar on scroll
+function ElevationScroll(props: any) {
     const { children } = props;
     const trigger = useScrollTrigger({
         disableHysteresis: true,
@@ -40,12 +40,13 @@ function ElevationScroll(props: Props) {
     });
 }
 
+// the Headbar displaying the usermenu
 function HeadbarWithChildren(props: Props) {
     const classes = useStyles();
     return (
         <>
             <CssBaseline />
-            <ElevationScroll {...props}>
+            <ElevationScroll>
                 <AppBar>
                     <Toolbar>
                         <Typography variant="h6" className={classes.title}>
@@ -60,6 +61,7 @@ function HeadbarWithChildren(props: Props) {
     );
 }
 
+// wrapper for the headbar
 export default function Headbar({ setAuth }: ISetAuth) {
-    return <HeadbarWithChildren children={<></>} setAuth={setAuth} />;
+    return <HeadbarWithChildren setAuth={setAuth} />;
 }

@@ -30,6 +30,7 @@ interface IConfigModal {
     update: (session: ISessionInfo) => void;
 }
 
+// modal to config sessions details
 export default function ConfigSessionModal(props: IConfigModal) {
     const [inputs, setInputs] = useState({
         id: props.session.id,
@@ -55,6 +56,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         setInputs({ ...inputs, [e.target.id]: e.target.value });
     };
 
+    // set inputs back to session infos
     const refreshModal = () => {
         setInputs({
             id: props.session.id,
@@ -72,6 +74,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         setChangePassword(!changePassword);
     };
 
+    // filter input for changes and prepare JSON to send
     const updateServerInformations = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setDisable(true);
@@ -94,6 +97,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         if (changePassword) {
             newInformations = { ...newInformations, password: password };
         }
+        // if information has changed, send changes to server
         if (Object.keys(newInformations).length > 0) {
             let newSession: any = inputs;
             delete newSession.password;
@@ -117,6 +121,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 });
             // Add api-call to update informations
         } else {
+            setDisable(false);
             toast.success("No changes to apply.");
         }
         props.setOpen(false);

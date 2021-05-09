@@ -37,6 +37,7 @@ interface IUserMenu {
     setAuth(bool: boolean): void;
 }
 
+// burger menu in headbar with links to dashboard, personal data and logout
 export default function CustomizedMenus({ setAuth }: IUserMenu) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -50,8 +51,10 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
 
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
+        // delete session token on server
         API.post("auth/logout/")
             .then(() => {
+                // remove token locally afterwards
                 localStorage.removeItem("token");
                 toast.success("See you next time!");
             })

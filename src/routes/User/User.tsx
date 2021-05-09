@@ -49,6 +49,7 @@ interface ISetAuth {
     setAuth(bool: boolean): void;
 }
 
+// display userdata and ssh-keys with the option edit both
 export default function Client({ setAuth }: ISetAuth) {
     const classes = useStyles();
     // const [loading, setLoading] = useState(true);
@@ -92,6 +93,7 @@ export default function Client({ setAuth }: ISetAuth) {
         setSshInput(sshKeys);
     };
 
+    // send changes of ssh-keys to server
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setDisable(true)
@@ -125,6 +127,7 @@ export default function Client({ setAuth }: ISetAuth) {
         });
     };
 
+    // determine changes to userdata and send to server
     const onSubmitChanges = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setDisable(true);
@@ -149,7 +152,7 @@ export default function Client({ setAuth }: ISetAuth) {
         }
         if (Object.keys(updates).length > 0) {
             API.patch("/personal_data/", updates)
-                .then((res) => {
+                .then(() => {
                     setDisable(false);
                     toast.success("Updated personal data successfully!");
                 })
@@ -178,6 +181,7 @@ export default function Client({ setAuth }: ISetAuth) {
         e.preventDefault();
         setInputs({ ...inputs, [e.target.name]: e.target.value });
 
+        // display errors if passwords do not match
         if (e.target.name === "password2") {
             if (e.target.value !== password) {
                 setPasswordError(true);
@@ -213,6 +217,7 @@ export default function Client({ setAuth }: ISetAuth) {
             })
     }
 
+    // load known hosts and personal data
     useEffect(() => {
         API.get("/known_hosts/")
             .then((data) => {

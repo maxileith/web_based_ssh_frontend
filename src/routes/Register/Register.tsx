@@ -10,15 +10,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface IRegister {
-    setAuth(bool: boolean): void;
-}
 
 interface Props {
     children: React.ReactElement;
 }
 
-const Register = ({ setAuth }: IRegister) => {
+// component to register as a new user
+const Register = (props: any) => {
     const [inputs, setInputs] = useState({
         first_name: "",
         last_name: "",
@@ -42,6 +40,7 @@ const Register = ({ setAuth }: IRegister) => {
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        // disbale register button while waiting for response
         setDisable(true);
 
         const body = { first_name, last_name, email, password, username };
@@ -68,7 +67,7 @@ const Register = ({ setAuth }: IRegister) => {
             });
     };
 
-
+    // custom headbar with no burgermenu
     function ElevationScroll(props: Props) {
         const { children } = props;
         const trigger = useScrollTrigger({

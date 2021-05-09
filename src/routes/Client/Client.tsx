@@ -7,7 +7,6 @@ import {
 } from "@material-ui/core";
 import { Fragment, useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import Headbar from "../../components/Headbar/Headbar";
 import Term from "../../components/Terminal/Term";
 import { ISessionInfo } from "../../components/SessionCard/SessionCard";
 import API from "../../Api";
@@ -19,7 +18,7 @@ interface IClient {
     index: number;
 }
 
-
+// displays a Client and its information in the clientwrapper
 export default function Client( props: IClient) {
     const history = useHistory();
     const [session, setSession] = useState({} as ISessionInfo);
@@ -28,6 +27,7 @@ export default function Client( props: IClient) {
     const [connectionTime, setConnectionTime] = useState("00:00:00");
 
     const sessionId = props.id;
+    // get session details for session id
     useEffect(() => {
         API.get("saved_sessions/details/" + sessionId, {
             withCredentials: true,
@@ -42,6 +42,7 @@ export default function Client( props: IClient) {
         updateTime();
     }, []);
 
+    // connection timer
     const updateTime = () => {
         const newDate = new Date();
         let upTime = newDate.getTime() - startTime;

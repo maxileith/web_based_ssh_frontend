@@ -13,6 +13,7 @@ interface IDashboard {
     setAuth(bool: boolean): void;
 }
 
+// entrypoint of application. Displays all Saved Sessions
 export default function Dashboard(props: IDashboard) {
     const [edit, setEdit] = useState(false);
     const [savedSessions, setSavedSessions] = useState<any>({
@@ -49,16 +50,18 @@ export default function Dashboard(props: IDashboard) {
     };
 
     useEffect(() => {
-        API.get("saved_sessions/", { withCredentials: true })
+        // get all sessions of a user
+        API.get("saved_sessions/")
             .then((data) => {
                 setSavedSessions({ sessions: data.data["sessions"] });
+                // save sessions locally to minimize api calls
                 localStorage.setItem("sessions", JSON.stringify(data.data["sessions"]));
             })
             .catch((err) => {
                 if (
                     err.response &&
                     err.response.data &&
-                    err.response.status == 404
+                    err.response.status === 404
                 ) {
                     toast.warning(err.response.data.message);
                 } else if (err.response && err.response.data) {
@@ -70,6 +73,7 @@ export default function Dashboard(props: IDashboard) {
             });
     }, []);
 
+    // mapping the sessions into sessionCards
     return (
         <Fragment>
             <Headbar setAuth={props.setAuth} />

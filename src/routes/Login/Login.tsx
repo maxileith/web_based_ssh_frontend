@@ -50,6 +50,7 @@ interface ISetAuth {
     setAuth(bool: boolean): void;
 }
 
+// login screen with picture
 export default function Login({ setAuth }: ISetAuth) {
     const classes = useStyles();
     const [inputs, setInputs] = useState({
@@ -66,6 +67,7 @@ export default function Login({ setAuth }: ISetAuth) {
         setInputs({ ...inputs, [e.target.name]: e.target.value });
     };
 
+    // disable login button while waiting for response
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setDisable(true);

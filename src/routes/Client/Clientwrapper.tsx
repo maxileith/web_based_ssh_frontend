@@ -15,6 +15,7 @@ interface IScreen {
     screenID: number;
 }
 
+// interact with clients, add and remove them
 export default function ClientWrapper(props: IClient) {
     let [terminalCounter, setTerminalCounter] = useState(2);
 
@@ -25,6 +26,7 @@ export default function ClientWrapper(props: IClient) {
 
     let clientCount = clientIds.length;
 
+    // sizing to fit screen at any time
     let sizes: GridSize[];
     if (clientCount === 1) {
         sizes = [12];
@@ -36,6 +38,7 @@ export default function ClientWrapper(props: IClient) {
         sizes = [6, 6, 6, 6];
     }
 
+    // add client to view 
     const addClientId = (id: number) => {
         if (clientCount < 4) {
             setClientIds([
@@ -49,6 +52,7 @@ export default function ClientWrapper(props: IClient) {
         }
     };
 
+    // remove client without interrupting over sessions. Triigers resize in clients
     const remove_client = (index: number) => {
         console.log(index);
         let ids = [...clientIds];

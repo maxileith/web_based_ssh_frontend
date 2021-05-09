@@ -13,7 +13,7 @@ import {
     Theme,
     Typography,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
@@ -58,6 +58,8 @@ interface ISessionCard {
     delete: () => void;
 }
 
+
+// Sessioncards displayed in dashboard. Containing the delete and config modals
 const SessionCard = (props: ISessionCard) => {
     const classes = useStyles();
     const history = useHistory();
@@ -69,6 +71,7 @@ const SessionCard = (props: ISessionCard) => {
         setOpenEdit(bool);
     };
 
+    // removes session from database
     const removeSession = (sessionId: number) => {
         setDisable(true);
         API.delete("saved_sessions/details/" + sessionId, {
@@ -76,6 +79,7 @@ const SessionCard = (props: ISessionCard) => {
         })
             .then((res) => {
                 toast.success(res.data.message);
+                // removes session from dashboard with no refresh
                 props.delete();
                 setOpenDelete(false);
             })
@@ -91,6 +95,7 @@ const SessionCard = (props: ISessionCard) => {
             });
     };
 
+    // determine style, Icon and OnClick based on selected mode in dashboard (normal, edit, delete)
     const determineStyle = () => {
         if (props.edit) return classes.editCard;
 
@@ -128,9 +133,8 @@ const SessionCard = (props: ISessionCard) => {
         }
     };
 
+    // pathing for the config-modal to the dashboard
     const updateSession = (session: ISessionInfo) => {
-        // console.log("---");
-        // console.log(session);
         props.update(session);
     };
 
