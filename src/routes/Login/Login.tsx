@@ -3,6 +3,7 @@ import {
     Button,
     CssBaseline,
     Grid,
+    Link,
     makeStyles,
     Paper,
     TextField,
@@ -12,6 +13,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import LockOutlinedIcon from "@material-ui/icons/LockOutlined";
 import API from "../../Api";
 import { toast } from "react-toastify";
+import { useHistory } from "react-router";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -60,6 +62,8 @@ export default function Login({ setAuth }: ISetAuth) {
     const [disable, setDisable] = useState(false);
 
     const { username, password } = inputs;
+
+    const history = useHistory();
 
     const onChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -151,6 +155,12 @@ export default function Login({ setAuth }: ISetAuth) {
                             Sign In
                         </Button>
                     </form>
+                    <Link
+                        onClick={() => history.push("/register")}
+                        style={{ cursor: "pointer" }}
+                    >
+                        Register
+                    </Link>
                 </div>
             </Grid>
         </Grid>

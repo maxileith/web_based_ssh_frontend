@@ -46,10 +46,10 @@ export default class Term extends React.Component<IProps, STerm> {
         // after terminal mount start ws connection
         this.ws = new WebSocket(
             wsUrl +
-            "/ws/ssh/" +
-            this.props.sessionId +
-            "?token=" +
-            localStorage.getItem("token")
+                "/ws/ssh/" +
+                this.props.sessionId +
+                "?token=" +
+                localStorage.getItem("token")
         );
 
         // open terminal and fit to size
@@ -68,16 +68,15 @@ export default class Term extends React.Component<IProps, STerm> {
         this.ws.onclose = () => {
             if (this.props.clientCount === 1) {
                 this.term.write("returning to dashboard ...");
-                toast.warning("Returning to dashboard.", { pauseOnHover: false });
-                console.log(this.state);
+                toast.warning("Returning to dashboard.", {
+                    pauseOnHover: false,
+                });
                 this.setState({
                     alreadyGone: setTimeout(() => {
                         this.props.history.push("/");
                     }, 5000),
                 });
             } else {
-                console.log(this.props.index);
-                // remove itself from clientwrapper, when there are still other clients open
                 this.props.selfDestroy(this.props.index);
             }
         };
@@ -92,7 +91,7 @@ export default class Term extends React.Component<IProps, STerm> {
     componentWillUnmount() {
         this.term.dispose();
         // overwrite onclose function for better ux
-        this.ws.onclose = () => { };
+        this.ws.onclose = () => {};
         this.ws.close();
         // if there is a timeout, remove it
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
@@ -105,7 +104,6 @@ export default class Term extends React.Component<IProps, STerm> {
 
     onResize = (event: { cols: number; rows: number }) => {
         const json = JSON.stringify({ resize: [event.cols, event.rows] });
-        // console.log(json);
         if (this.ws) this.ws.send(json);
     };
 

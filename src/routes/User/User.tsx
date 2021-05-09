@@ -96,8 +96,7 @@ export default function Client({ setAuth }: ISetAuth) {
     // send changes of ssh-keys to server
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        setDisable(true)
-        console.log(e);
+        setDisable(true);
         const body = {
             content: sshInput,
         };
@@ -109,7 +108,6 @@ export default function Client({ setAuth }: ISetAuth) {
             })
             .catch((err) => {
                 setDisable(false);
-                console.log(err.message);
                 toast.error("Failed to save known hosts.");
             });
 
@@ -208,14 +206,14 @@ export default function Client({ setAuth }: ISetAuth) {
             })
             .catch((err) => {
                 setDisable(false);
-                if(err.response && err.response.data) {
+                if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
                     console.error(err.message);
                 }
-            })
-    }
+            });
+    };
 
     // load known hosts and personal data
     useEffect(() => {
@@ -225,7 +223,6 @@ export default function Client({ setAuth }: ISetAuth) {
                 setSshInput(data.data["content"]);
             })
             .catch((err) => {
-                console.log(err.message);
                 toast.error("Failed to load known hosts.");
             });
         API.get("/personal_data/")
@@ -234,7 +231,6 @@ export default function Client({ setAuth }: ISetAuth) {
                 setInputs(data.data);
             })
             .catch((err) => {
-                console.log(err.message);
                 toast.error("Failed to load personal details.");
             });
     }, []);
@@ -320,6 +316,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 value={password}
                                 onChange={(e) => onInputChanges(e)}
                                 fullWidth
+                                error={passwordError}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -387,13 +384,12 @@ export default function Client({ setAuth }: ISetAuth) {
                         rows={20}
                         rowsMax={20}
                         InputProps={{
-                            className: classes.multilineColor
+                            className: classes.multilineColor,
                         }}
                         className={classes.editor}
                         spellCheck={false}
                         value={sshInput}
                         onChange={(e) => onSshChange(e)}
-                        
                     />
                     <Grid
                         container
@@ -425,8 +421,15 @@ export default function Client({ setAuth }: ISetAuth) {
                         </Grid>
                     </Grid>
                 </form>
-                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount} disabled={disable}>
-                    Account Löschen
+                <Button
+                    fullWidth
+                    color="secondary"
+                    variant="contained"
+                    className={classes.delete}
+                    onClick={deleteAccount}
+                    disabled={disable}
+                >
+                    Delete Account
                 </Button>
             </Container>
         </Fragment>

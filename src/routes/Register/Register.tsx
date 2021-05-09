@@ -1,4 +1,14 @@
-import { AppBar, Button, Container, CssBaseline, makeStyles, TextField, Toolbar, Typography, useScrollTrigger } from "@material-ui/core";
+import {
+    AppBar,
+    Button,
+    Container,
+    CssBaseline,
+    makeStyles,
+    TextField,
+    Toolbar,
+    Typography,
+    useScrollTrigger,
+} from "@material-ui/core";
 import React, { ChangeEvent, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
@@ -9,7 +19,6 @@ const useStyles = makeStyles((theme) => ({
         margin: theme.spacing(3, 0, 2),
     },
 }));
-
 
 interface Props {
     children: React.ReactElement;
@@ -23,6 +32,7 @@ const Register = (props: any) => {
         email: "",
         username: "",
         password: "",
+        repeatPassword: "",
     });
 
     const [disable, setDisable] = useState(false);
@@ -30,12 +40,31 @@ const Register = (props: any) => {
     const history = useHistory();
     const classes = useStyles();
 
-    const { first_name, last_name, email, username, password } = inputs;
+    const [passwordError, setPasswordError] = useState(false);
+
+    const {
+        first_name,
+        last_name,
+        email,
+        username,
+        password,
+        repeatPassword,
+    } = inputs;
 
     const onChangeText = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
         setInputs({ ...inputs, [e.target.name]: e.target.value });
+        if (e.target.name === "password" && e.target.value !== repeatPassword) {
+            setPasswordError(true);
+        } else if (
+            e.target.name === "repeatPassword" &&
+            e.target.value !== password
+        ) {
+            setPasswordError(true);
+        } else {
+            setPasswordError(false);
+        }
     };
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
@@ -44,6 +73,11 @@ const Register = (props: any) => {
         setDisable(true);
 
         const body = { first_name, last_name, email, password, username };
+
+        if (passwordError) {
+            toast.error("The passwords do not match.");
+            return;
+        }
 
         API.post("auth/register/", body)
             .then((res) => {
@@ -155,6 +189,21 @@ const Register = (props: any) => {
                             autoComplete="current-password"
                             value={password}
                             onChange={(e) => onChangeText(e)}
+                            error={passwordError}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="repeatPassword"
+                            label="Repeat Password"
+                            type="password"
+                            id="repeatPassword"
+                            autoComplete="current-password"
+                            value={repeatPassword}
+                            onChange={(e) => onChangeText(e)}
+                            error={passwordError}
                         />
                         <Button
                             type="submit"

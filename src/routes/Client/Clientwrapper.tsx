@@ -54,11 +54,8 @@ export default function ClientWrapper(props: IClient) {
 
     // remove client without interrupting over sessions. Triigers resize in clients
     const remove_client = (index: number) => {
-        console.log(index);
         let ids = [...clientIds];
-        console.log([...ids]);
         ids.splice(index, 1);
-        console.log(ids);
         setClientIds(ids);
     };
 
