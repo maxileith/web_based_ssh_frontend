@@ -11,12 +11,14 @@ import {
     makeStyles,
     TextField,
     Tooltip,
+    Typography,
 } from "@material-ui/core";
 import { ChangeEvent, FormEvent, useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
 import { ISessionInfo } from "../SessionCard/ConfigSessionModal";
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 const useStyles = makeStyles((theme) => ({
     absolute: {
@@ -49,6 +51,9 @@ const AddSession = (props: IAddSession) => {
         port: 22,
     });
     const [disable, setDisable] = useState(false);
+    const [keyFile, setKeyFile] = useState<File | null>();
+    const [disableUpload, setDisableUpload] = useState(false);
+    const [disablePassword, setDisablePassword] = useState(false);
 
     const { hostname, username, password, description, title, port } = inputs;
 
@@ -63,6 +68,13 @@ const AddSession = (props: IAddSession) => {
     const onChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
+        if (e.target.id === "password") {
+            if (e.target.value === "") {
+                setDisableUpload(false);
+            } else {
+                setDisableUpload(true);
+            }
+        }
         setInputs({ ...inputs, [e.target.id]: e.target.value });
     };
 
@@ -76,6 +88,7 @@ const AddSession = (props: IAddSession) => {
             title: "",
             port: 22,
         });
+        setKeyFile(null);
         setOpen(false);
     };
 
@@ -89,7 +102,21 @@ const AddSession = (props: IAddSession) => {
                 toast.success(res.data.message);
                 // add session to dashboard without reload
                 props.addSession(res.data.details);
+                if (keyFile) {
+                    const formData = new FormData();
+                    formData.append('key_file', keyFile);
+                    API.post(`saved_sessions/details/${res.data.details.id}/key`, formData, {
+                        headers: { 'Content-Type': 'multipart/form-data', }
+                    })
+                        .then((res) => {
+                            toast.success("Key file uploaded successfully");
+                        })
+                        .catch((err) => {
+                            toast.error("Could not upload key file");
+                        });
+                }
                 refreshModal();
+                setDisable(false);
                 setOpen(false);
             })
             .catch((err) => {
@@ -102,6 +129,24 @@ const AddSession = (props: IAddSession) => {
                 }
             });
     };
+
+    const uploadFile = (files: HTMLInputElement["files"] | null) => {
+        if (files === null) {
+            toast.warning("No files provided");
+        } else if (files.length > 1) {
+            toast.warning("You can only upload one file");
+        } else {
+            setKeyFile(files[0]);
+            setDisablePassword(true);
+            setDisableUpload(true);
+        }
+    }
+
+    const removeKeyFile = () => {
+        setKeyFile(null);
+        setDisablePassword(false);
+        setDisableUpload(false);
+    }
 
     return (
         <>
@@ -132,8 +177,8 @@ const AddSession = (props: IAddSession) => {
                         <Grid
                             container
                             direction="row"
-                            justify="center"
-                            alignItems="flex-start"
+                            justify="flex-start"
+                            alignItems="center"
                             spacing={2}
                         >
                             <Grid item xs={12} sm={6}>
@@ -182,8 +227,39 @@ const AddSession = (props: IAddSession) => {
                                     onChange={(e) => onChange(e)}
                                     value={password}
                                     fullWidth
+                                    disabled={disablePassword}
                                 />
                             </Grid>
+                            <Grid item xs={12}>
+                                <input
+                                    style={{ display: 'none' }}
+                                    id="raised-button-file"
+                                    type="file"
+                                    onChange={(e) => uploadFile(e.target.files)}
+                                    disabled={disableUpload}
+                                />
+                                <label htmlFor="raised-button-file">
+                                    <Button variant="contained" component="span" color="primary" disabled={disableUpload} >
+                                        Upload Key File
+                                    </Button>
+                                </label>
+                            </Grid>
+                            {
+                                keyFile ? (
+                                    <>
+                                        <Grid item>
+                                            <Typography>
+                                                {keyFile.name}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item>
+                                            <IconButton onClick={removeKeyFile}>
+                                                <HighlightOffIcon color="secondary" />
+                                            </IconButton>
+                                        </Grid>
+                                    </>
+                                ) : ""
+                            }
                         </Grid>
                     </DialogContent>
                     <DialogTitle>Details</DialogTitle>
@@ -209,6 +285,7 @@ const AddSession = (props: IAddSession) => {
                                     onChange={(e) => onChange(e)}
                                     value={title}
                                     fullWidth
+                                    required
                                 />
                             </Grid>
                         </Grid>

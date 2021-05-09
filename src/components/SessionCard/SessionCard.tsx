@@ -48,6 +48,7 @@ export interface ISessionInfo {
     username: String;
     description: String;
     port: number;
+    key_file: boolean;
 }
 
 interface ISessionCard {

@@ -8,11 +8,14 @@ import {
     DialogTitle,
     FormControlLabel,
     Grid,
+    IconButton,
     TextField,
+    Typography,
 } from "@material-ui/core";
-import { ChangeEvent, FormEvent, useState } from "react";
+import React, { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 import API from "../../Api";
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 export interface ISessionInfo {
     id: number;
@@ -21,6 +24,7 @@ export interface ISessionInfo {
     username: String;
     description: String;
     port: number;
+    key_file: boolean;
 }
 
 interface IConfigModal {
@@ -42,7 +46,13 @@ export default function ConfigSessionModal(props: IConfigModal) {
         port: props.session.port,
     });
     const [changePassword, setChangePassword] = useState(false);
+    const [deleteKeyFile, setDeleteKeyFile] = useState(false);
     const [disable, setDisable] = useState(false);
+    const [keyFile, setKeyFile] = useState<File | null>();
+    const [disableUpload, setDisableUpload] = useState(false);
+    const [disablePassword, setDisablePassword] = useState(true);
+    const [disableDeleteKeyFile, setDisableDeleteKeyFile] = useState(!props.session.key_file);
+    const [disableChangePasswordBox, setDisableChangePasswordBox] = useState(props.session.key_file);
 
     const { hostname, username, password, description, title, port } = inputs;
 
@@ -68,10 +78,16 @@ export default function ConfigSessionModal(props: IConfigModal) {
             port: props.session.port,
         });
         handleClose();
+        setDisablePassword(props.session.key_file);
+        setKeyFile(null);
+        setDisableUpload(false);
+        setDisableChangePasswordBox(props.session.key_file);
+        setDisableDeleteKeyFile(!props.session.key_file);
     };
 
     const handlePasswordChange = () => {
         setChangePassword(!changePassword);
+        setDisablePassword(changePassword);
     };
 
     // filter input for changes and prepare JSON to send
@@ -124,8 +140,61 @@ export default function ConfigSessionModal(props: IConfigModal) {
             setDisable(false);
             toast.success("No changes to apply.");
         }
+        if (keyFile) {
+            const formData = new FormData();
+            formData.append('key_file', keyFile);
+            API.post(`saved_sessions/details/${props.session.id}/key`, formData, {
+                headers: { 'Content-Type': 'multipart/form-data', }
+            })
+                .then(() => {
+                    toast.success("Key file uploaded successfully");
+                })
+                .catch(() => {
+                    toast.error("Could not upload key file");
+                });
+        } else if (deleteKeyFile) {
+            API.delete(`saved_sessions/details/${props.session.id}/key`)
+                .then(() => {
+                    toast.success("Deleted key file!");
+                })
+                .catch(() => {
+                    toast.error("Could not delete key file.");
+                })
+        }
         props.setOpen(false);
     };
+
+    const uploadFile = (files: HTMLInputElement["files"] | null) => {
+        if (files === null) {
+            toast.warning("No files provided");
+        } else if (files.length > 1) {
+            toast.warning("You can only upload one file");
+        } else {
+            setKeyFile(files[0]);
+            setDisablePassword(true);
+            setDisableUpload(true);
+            setDisableDeleteKeyFile(true);
+            setDisableChangePasswordBox(true);
+        }
+    }
+
+    const removeKeyFile = () => {
+        setKeyFile(null);
+        setDisablePassword(props.session.key_file);
+        setDisableUpload(false);
+        setDisableDeleteKeyFile(!props.session.key_file);
+        setDisableChangePasswordBox(props.session.key_file);
+    }
+
+    const handleDeleteKeyFile = () => {
+        setDisableUpload(!deleteKeyFile);
+        setDisableChangePasswordBox(deleteKeyFile);
+        if (deleteKeyFile) {
+            setChangePassword(!deleteKeyFile);
+            setDisablePassword(deleteKeyFile);
+        }
+        setDeleteKeyFile(!deleteKeyFile);
+    }
 
     return (
         <Dialog open={props.open} onClose={handleClose}>
@@ -189,6 +258,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                                 onChange={(e) => onChange(e)}
                                 value={password}
                                 fullWidth
+                                disabled={disablePassword}
                             />
                         </Grid>
                         <Grid item xs={12}>
@@ -201,8 +271,52 @@ export default function ConfigSessionModal(props: IConfigModal) {
                                     />
                                 }
                                 label="I want to change my password"
+                                disabled={disableChangePasswordBox}
                             />
                         </Grid>
+                        <Grid item xs={12}>
+                            <FormControlLabel
+                                control={
+                                    <Checkbox
+                                        checked={deleteKeyFile}
+                                        onChange={handleDeleteKeyFile}
+                                        color="primary"
+                                    />
+                                }
+                                label="I want to delete my key file"
+                                disabled={disableDeleteKeyFile}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <input
+                                style={{ display: 'none' }}
+                                id="raised-button-file"
+                                type="file"
+                                onChange={(e) => uploadFile(e.target.files)}
+                                disabled={disableUpload  || changePassword}
+                            />
+                            <label htmlFor="raised-button-file">
+                                <Button variant="contained" component="span" color="primary" disabled={disableUpload || changePassword} >
+                                    Upload New Key File
+                                    </Button>
+                            </label>
+                        </Grid>
+                        {
+                            keyFile ? (
+                                <>
+                                    <Grid item>
+                                        <Typography>
+                                            {keyFile.name}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <IconButton onClick={removeKeyFile}>
+                                            <HighlightOffIcon color="secondary" />
+                                        </IconButton>
+                                    </Grid>
+                                </>
+                            ) : ""
+                        }
                     </Grid>
                 </DialogContent>
                 <DialogTitle>Details</DialogTitle>
