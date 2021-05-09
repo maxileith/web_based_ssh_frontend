@@ -19,7 +19,7 @@ interface IClient {
 }
 
 // displays a Client and its information in the clientwrapper
-export default function Client( props: IClient) {
+export default function Client(props: IClient) {
     const history = useHistory();
     const [session, setSession] = useState({} as ISessionInfo);
     const date = new Date();
@@ -52,15 +52,20 @@ export default function Client( props: IClient) {
         upTime = upTime % 60000;
         const upSeconds = Math.floor(upTime / 1000);
 
-
-        setConnectionTime(formatTime(upHours) + ":" + formatTime(upMinutes) + ":" + formatTime(upSeconds));
+        setConnectionTime(
+            formatTime(upHours) +
+                ":" +
+                formatTime(upMinutes) +
+                ":" +
+                formatTime(upSeconds)
+        );
 
         setTimeout(updateTime, 1000);
-    }
+    };
 
     const formatTime = (i: number) => {
-        return i < 10 ? "0" + i : "" + i
-    }
+        return i < 10 ? "0" + i : "" + i;
+    };
 
     return (
         <Fragment>
@@ -91,7 +96,9 @@ export default function Client( props: IClient) {
                         <Card style={{ height: "100%" }}>
                             <CardContent>
                                 <Typography>
-                                    <b>Authentication-Method:</b> {session.id} <br />
+                                    <b>Authentication-Method:</b>{" "}
+                                    {session.key_file ? "Key file" : "Password"}{" "}
+                                    <br />
                                     <b>Connected for:</b> {connectionTime}
                                 </Typography>
                             </CardContent>
@@ -99,7 +106,13 @@ export default function Client( props: IClient) {
                     </Grid>
                 </Grid>
 
-                <Term history={history} sessionId={sessionId} clientCount={props.clientCount} selfDestroy={props.selfDestroy} index={props.index}/>
+                <Term
+                    history={history}
+                    sessionId={sessionId}
+                    clientCount={props.clientCount}
+                    selfDestroy={props.selfDestroy}
+                    index={props.index}
+                />
             </Container>
         </Fragment>
     );

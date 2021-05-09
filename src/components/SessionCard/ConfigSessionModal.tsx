@@ -12,10 +12,10 @@ import {
     TextField,
     Typography,
 } from "@material-ui/core";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from "react-toastify";
 import API from "../../Api";
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 export interface ISessionInfo {
     id: number;
@@ -51,8 +51,12 @@ export default function ConfigSessionModal(props: IConfigModal) {
     const [keyFile, setKeyFile] = useState<File | null>();
     const [disableUpload, setDisableUpload] = useState(false);
     const [disablePassword, setDisablePassword] = useState(true);
-    const [disableDeleteKeyFile, setDisableDeleteKeyFile] = useState(!props.session.key_file);
-    const [disableChangePasswordBox, setDisableChangePasswordBox] = useState(props.session.key_file);
+    const [disableDeleteKeyFile, setDisableDeleteKeyFile] = useState(
+        !props.session.key_file
+    );
+    const [disableChangePasswordBox, setDisableChangePasswordBox] = useState(
+        props.session.key_file
+    );
 
     const { hostname, username, password, description, title, port } = inputs;
 
@@ -83,6 +87,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         setDisableUpload(false);
         setDisableChangePasswordBox(props.session.key_file);
         setDisableDeleteKeyFile(!props.session.key_file);
+        setDeleteKeyFile(false);
     };
 
     const handlePasswordChange = () => {
@@ -142,10 +147,14 @@ export default function ConfigSessionModal(props: IConfigModal) {
         }
         if (keyFile) {
             const formData = new FormData();
-            formData.append('key_file', keyFile);
-            API.post(`saved_sessions/details/${props.session.id}/key`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data', }
-            })
+            formData.append("key_file", keyFile);
+            API.post(
+                `saved_sessions/details/${props.session.id}/key`,
+                formData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            )
                 .then(() => {
                     toast.success("Key file uploaded successfully");
                 })
@@ -159,8 +168,9 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 })
                 .catch(() => {
                     toast.error("Could not delete key file.");
-                })
+                });
         }
+        refreshModal();
         props.setOpen(false);
     };
 
@@ -176,7 +186,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
             setDisableDeleteKeyFile(true);
             setDisableChangePasswordBox(true);
         }
-    }
+    };
 
     const removeKeyFile = () => {
         setKeyFile(null);
@@ -184,7 +194,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
         setDisableUpload(false);
         setDisableDeleteKeyFile(!props.session.key_file);
         setDisableChangePasswordBox(props.session.key_file);
-    }
+    };
 
     const handleDeleteKeyFile = () => {
         setDisableUpload(!deleteKeyFile);
@@ -194,7 +204,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
             setDisablePassword(deleteKeyFile);
         }
         setDeleteKeyFile(!deleteKeyFile);
-    }
+    };
 
     return (
         <Dialog open={props.open} onClose={handleClose}>
@@ -289,34 +299,37 @@ export default function ConfigSessionModal(props: IConfigModal) {
                         </Grid>
                         <Grid item xs={12}>
                             <input
-                                style={{ display: 'none' }}
+                                style={{ display: "none" }}
                                 id="raised-button-file"
                                 type="file"
                                 onChange={(e) => uploadFile(e.target.files)}
-                                disabled={disableUpload  || changePassword}
+                                disabled={disableUpload || changePassword}
                             />
                             <label htmlFor="raised-button-file">
-                                <Button variant="contained" component="span" color="primary" disabled={disableUpload || changePassword} >
+                                <Button
+                                    variant="contained"
+                                    component="span"
+                                    color="primary"
+                                    disabled={disableUpload || changePassword}
+                                >
                                     Upload New Key File
-                                    </Button>
+                                </Button>
                             </label>
                         </Grid>
-                        {
-                            keyFile ? (
-                                <>
-                                    <Grid item>
-                                        <Typography>
-                                            {keyFile.name}
-                                        </Typography>
-                                    </Grid>
-                                    <Grid item>
-                                        <IconButton onClick={removeKeyFile}>
-                                            <HighlightOffIcon color="secondary" />
-                                        </IconButton>
-                                    </Grid>
-                                </>
-                            ) : ""
-                        }
+                        {keyFile ? (
+                            <>
+                                <Grid item>
+                                    <Typography>{keyFile.name}</Typography>
+                                </Grid>
+                                <Grid item>
+                                    <IconButton onClick={removeKeyFile}>
+                                        <HighlightOffIcon color="secondary" />
+                                    </IconButton>
+                                </Grid>
+                            </>
+                        ) : (
+                            ""
+                        )}
                     </Grid>
                 </DialogContent>
                 <DialogTitle>Details</DialogTitle>
