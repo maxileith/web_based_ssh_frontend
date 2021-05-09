@@ -1,0 +1,29 @@
+version: "3"
+services:
+    websshfrontend:
+        container_name: websshfrontend
+        build: .
+        restart: always
+        ports:
+            - 127.0.0.1:3000:80
+        labels:
+            traefik.enable: true
+            traefik.http.routers.websshfrontend.entrypoints: http
+            traefik.http.routers.websshfrontend.rule: Host(`${URL_FRONTEND}`)
+            traefik.http.routers.websshfrontend.middlewares: https-redirect@file
+            traefik.http.routers.websshfrontend-secure.entrypoints: https
+            traefik.http.services.websshfrontend-secure.loadbalancer.server.port: 80
+            traefik.http.routers.websshfrontend-secure.middlewares: default-headers@file
+            traefik.http.routers.websshfrontend-secure.rule: Host(`${URL_FRONTEND}`)
+            traefik.http.routers.websshfrontend-secure.tls: true
+            traefik.http.routers.websshfrontend-secure.tls.options: myTLSOptions@file
+            traefik.http.routers.websshfrontend-secure.tls.certresolver: le
+        networks:
+            traefik_private:
+            traefik_public:
+
+networks:
+    traefik_private:
+        external: true
+    traefik_public:
+        external: true

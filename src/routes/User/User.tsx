@@ -5,7 +5,6 @@ import {
     Typography,
     TextField,
     Button,
-    TextareaAutosize,
     Checkbox,
     FormControlLabel,
 } from "@material-ui/core";
@@ -32,14 +31,17 @@ const useStyles = makeStyles((theme) => ({
     editor: {
         width: "100%",
         background: "black",
+        marginBottom: "1rem",
+    },
+    multilineColor: {
         color: "white",
         fontFamily: "Ubuntu Mono, monospace",
-        "&:focus": {
-            outline: 0,
-        },
     },
     button: {
         width: "96px",
+    },
+    delete: {
+        marginTop: "32px",
     },
 }));
 
@@ -47,6 +49,7 @@ interface ISetAuth {
     setAuth(bool: boolean): void;
 }
 
+// display userdata and ssh-keys with the option edit both
 export default function Client({ setAuth }: ISetAuth) {
     const classes = useStyles();
     // const [loading, setLoading] = useState(true);
@@ -65,6 +68,7 @@ export default function Client({ setAuth }: ISetAuth) {
         password: "",
         password2: "",
     });
+    const [disable, setDisable] = useState(false);
 
     const {
         last_name,
@@ -89,8 +93,10 @@ export default function Client({ setAuth }: ISetAuth) {
         setSshInput(sshKeys);
     };
 
+    // send changes of ssh-keys to server
     const onSshSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true)
         console.log(e);
         const body = {
             content: sshInput,
@@ -99,8 +105,10 @@ export default function Client({ setAuth }: ISetAuth) {
             .then(() => {
                 toast.success("Saved known hosts.");
                 setSshKeys(sshInput);
+                setDisable(false);
             })
             .catch((err) => {
+                setDisable(false);
                 console.log(err.message);
                 toast.error("Failed to save known hosts.");
             });
@@ -119,8 +127,10 @@ export default function Client({ setAuth }: ISetAuth) {
         });
     };
 
+    // determine changes to userdata and send to server
     const onSubmitChanges = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        setDisable(true);
         let updates = {};
         if (first_name !== userInfo.first_name) {
             updates = { first_name: first_name };
@@ -142,14 +152,25 @@ export default function Client({ setAuth }: ISetAuth) {
         }
         if (Object.keys(updates).length > 0) {
             API.patch("/personal_data/", updates)
-                .then((res) => {
+                .then(() => {
+                    setDisable(false);
                     toast.success("Updated personal data successfully!");
                 })
                 .catch((err) => {
-                    console.error(err.message);
-                    toast.error("Changes could not be saved!");
+                    setDisable(false);
+                    if (
+                        err.response &&
+                        err.response.data &&
+                        err.response.data.message
+                    ) {
+                        toast.error(err.response.data.message);
+                    } else {
+                        toast.error(err.message);
+                        console.error(err.message);
+                    }
                 });
         } else {
+            setDisable(false);
             toast.warning("There are no changes to save!");
         }
     };
@@ -160,6 +181,7 @@ export default function Client({ setAuth }: ISetAuth) {
         e.preventDefault();
         setInputs({ ...inputs, [e.target.name]: e.target.value });
 
+        // display errors if passwords do not match
         if (e.target.name === "password2") {
             if (e.target.value !== password) {
                 setPasswordError(true);
@@ -175,8 +197,29 @@ export default function Client({ setAuth }: ISetAuth) {
         }
     };
 
+    const deleteAccount = () => {
+        setDisable(true);
+        API.delete("/personal_data")
+            .then((res) => {
+                setDisable(false);
+                toast.success(res.data.message);
+                localStorage.removeItem("token");
+                setAuth(false);
+            })
+            .catch((err) => {
+                setDisable(false);
+                if(err.response && err.response.data) {
+                    toast.error(err.response.data.message);
+                } else {
+                    toast.error(err.message);
+                    console.error(err.message);
+                }
+            })
+    }
+
+    // load known hosts and personal data
     useEffect(() => {
-        API.get("/known_hosts/", { withCredentials: true })
+        API.get("/known_hosts/")
             .then((data) => {
                 setSshKeys(data.data["content"]);
                 setSshInput(data.data["content"]);
@@ -185,7 +228,7 @@ export default function Client({ setAuth }: ISetAuth) {
                 console.log(err.message);
                 toast.error("Failed to load known hosts.");
             });
-        API.get("/personal_data/", { withCredentials: true })
+        API.get("/personal_data/")
             .then((data) => {
                 setUserInfo(data.data);
                 setInputs(data.data);
@@ -328,6 +371,7 @@ export default function Client({ setAuth }: ISetAuth) {
                                 color="primary"
                                 className={classes.button}
                                 type="submit"
+                                disabled={disable}
                             >
                                 Save
                             </Button>
@@ -338,13 +382,18 @@ export default function Client({ setAuth }: ISetAuth) {
                     Known hosts:
                 </Typography>
                 <form onSubmit={(e) => onSshSubmit(e)}>
-                    <TextareaAutosize
-                        rowsMin={20}
+                    <TextField
+                        multiline
+                        rows={20}
                         rowsMax={20}
+                        InputProps={{
+                            className: classes.multilineColor
+                        }}
                         className={classes.editor}
                         spellCheck={false}
                         value={sshInput}
                         onChange={(e) => onSshChange(e)}
+                        
                     />
                     <Grid
                         container
@@ -369,12 +418,16 @@ export default function Client({ setAuth }: ISetAuth) {
                                 color="primary"
                                 className={classes.button}
                                 type="submit"
+                                disabled={disable}
                             >
                                 Save
                             </Button>
                         </Grid>
                     </Grid>
                 </form>
+                <Button fullWidth color="secondary" variant="contained" className={classes.delete} onClick={deleteAccount} disabled={disable}>
+                    Account Löschen
+                </Button>
             </Container>
         </Fragment>
     );

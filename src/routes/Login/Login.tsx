@@ -50,12 +50,14 @@ interface ISetAuth {
     setAuth(bool: boolean): void;
 }
 
+// login screen with picture
 export default function Login({ setAuth }: ISetAuth) {
     const classes = useStyles();
     const [inputs, setInputs] = useState({
         username: "",
         password: "",
     });
+    const [disable, setDisable] = useState(false);
 
     const { username, password } = inputs;
 
@@ -65,9 +67,10 @@ export default function Login({ setAuth }: ISetAuth) {
         setInputs({ ...inputs, [e.target.name]: e.target.value });
     };
 
+    // disable login button while waiting for response
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(inputs);
+        setDisable(true);
 
         const body = { username, password };
 
@@ -77,7 +80,7 @@ export default function Login({ setAuth }: ISetAuth) {
                 setAuth(true);
             })
             .catch((err) => {
-                setAuth(false);
+                setDisable(false);
                 if (err.response && err.response.status === 401) {
                     toast.error("Username or password wrong");
                 } else {
@@ -143,6 +146,7 @@ export default function Login({ setAuth }: ISetAuth) {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            disabled={disable}
                         >
                             Sign In
                         </Button>

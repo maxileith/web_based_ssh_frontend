@@ -10,6 +10,8 @@ import { IconButton, Tooltip } from "@material-ui/core";
 import { Link } from "react-router-dom";
 import StorageIcon from "@material-ui/icons/Storage";
 import PersonIcon from "@material-ui/icons/Person";
+import API from "../../Api";
+import { toast } from "react-toastify";
 
 const StyledMenu = withStyles({
     paper: {
@@ -35,6 +37,7 @@ interface IUserMenu {
     setAuth(bool: boolean): void;
 }
 
+// burger menu in headbar with links to dashboard, personal data and logout
 export default function CustomizedMenus({ setAuth }: IUserMenu) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
@@ -48,7 +51,16 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
 
     const logout = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
-        localStorage.removeItem("token");
+        // delete session token on server
+        API.post("auth/logout/")
+            .then(() => {
+                // remove token locally afterwards
+                localStorage.removeItem("token");
+                toast.success("See you next time!");
+            })
+            .catch(() => {
+                toast.error("Logout failed!");
+            })
         setAuth(false);
     };
 

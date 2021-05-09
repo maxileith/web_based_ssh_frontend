@@ -4,22 +4,28 @@ import { FitAddon } from "xterm-addon-fit";
 import "../../components/Terminal/terminal.css";
 import { History } from "history";
 import { toast } from "react-toastify";
+import { wsUrl } from "../../Api";
 
 interface IProps {
     history: History<unknown>;
     sessionId: number;
+    clientCount: number;
+    selfDestroy: (index: number) => void;
+    index: number;
 }
 
 interface STerm {
     alreadyGone: NodeJS.Timeout | null;
 }
 
+// terminal component. Based on xTerm
 export default class Term extends React.Component<IProps, STerm> {
     term_dom: React.RefObject<HTMLDivElement>;
     term: Terminal;
     fitAddon: FitAddon;
     ws!: WebSocket;
 
+    // setup terminal
     constructor(props: IProps) {
         super(props);
 
@@ -29,6 +35,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
         this.term.onData(this.onData);
 
+        // state for toast timings
         this.state = {
             alreadyGone: null,
         };
@@ -36,15 +43,16 @@ export default class Term extends React.Component<IProps, STerm> {
     }
 
     componentDidMount() {
+        // after terminal mount start ws connection
         this.ws = new WebSocket(
-            "ws://" +
-                window.location.hostname +
-                ":8000/ws/ssh/" +
-                this.props.sessionId +
-                "?token=" +
-                localStorage.getItem("token")
+            wsUrl +
+            "/ws/ssh/" +
+            this.props.sessionId +
+            "?token=" +
+            localStorage.getItem("token")
         );
 
+        // open terminal and fit to size
         this.term.loadAddon(this.fitAddon);
         if (this.term_dom.current) {
             this.term.open(this.term_dom.current);
@@ -56,20 +64,37 @@ export default class Term extends React.Component<IProps, STerm> {
             if (data) this.term.write(data.data);
         };
 
+        // onClose function -> what happens when you exit the terminal
         this.ws.onclose = () => {
-            this.term.write("returning to dashboard ...");
-            toast.warning("Returning to dashboard.", { pauseOnHover: false });
-            this.setState({
-                alreadyGone: setTimeout(() => {
-                    this.props.history.push("/");
-                }, 5000),
-            });
+            if (this.props.clientCount === 1) {
+                this.term.write("returning to dashboard ...");
+                toast.warning("Returning to dashboard.", { pauseOnHover: false });
+                console.log(this.state);
+                this.setState({
+                    alreadyGone: setTimeout(() => {
+                        this.props.history.push("/");
+                    }, 5000),
+                });
+            } else {
+                console.log(this.props.index);
+                // remove itself from clientwrapper, when there are still other clients open
+                this.props.selfDestroy(this.props.index);
+            }
         };
     }
 
+    componentDidUpdate() {
+        // fit terminal after client is added or removed from clients view
+        this.fitAddon.fit();
+    }
+
+    // triggered by navigating back or to another view
     componentWillUnmount() {
         this.term.dispose();
+        // overwrite onclose function for better ux
+        this.ws.onclose = () => { };
         this.ws.close();
+        // if there is a timeout, remove it
         if (this.state.alreadyGone) clearTimeout(this.state.alreadyGone);
     }
 
@@ -80,7 +105,7 @@ export default class Term extends React.Component<IProps, STerm> {
 
     onResize = (event: { cols: number; rows: number }) => {
         const json = JSON.stringify({ resize: [event.cols, event.rows] });
-        console.log(json);
+        // console.log(json);
         if (this.ws) this.ws.send(json);
     };
 
