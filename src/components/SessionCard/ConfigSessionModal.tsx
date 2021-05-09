@@ -142,10 +142,8 @@ export default function ConfigSessionModal(props: IConfigModal) {
             )
                 .then((res) => {
                     toast.success(res.data.message);
-                    setDisable(false);
                 })
                 .catch((err) => {
-                    setDisable(false);
                     if (err.response && err.response.data) {
                         toast.error(err.response.data.message);
                     } else {
@@ -156,7 +154,6 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 });
             // Add api-call to update informations
         } else {
-            setDisable(false);
             toast.success("No changes to apply.");
         }
 
@@ -176,11 +173,15 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 .then(() => {
                     toast.success("Key file uploaded successfully");
                     newSession["key_file"] = true;
-                    props.update(newSession);
                 })
                 .catch(() => {
                     toast.error("Could not upload key file");
+                })
+                .finally(() => {
                     props.update(newSession);
+                    resetCredentials(newSession);
+                    handleClose();
+                    setDisable(false);
                 });
             // Delete key file if needed
         } else if (deleteKeyFile) {
@@ -188,21 +189,22 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 .then(() => {
                     toast.success("Deleted key file!");
                     newSession["key_file"] = false;
-                    props.update(newSession);
                 })
                 .catch(() => {
                     toast.error("Could not delete key file.");
+                })
+                .finally(() => {
                     props.update(newSession);
+                    resetCredentials(newSession);
+                    handleClose();
+                    setDisable(false);
                 });
         } else {
             props.update(newSession);
-        }
-
-        // timout makes sure that key_file is updated properly
-        setTimeout(() => {
             resetCredentials(newSession);
-        }, 200);
-        handleClose();
+            handleClose();
+            setDisable(false);
+        }
     };
 
     const uploadFile = (files: HTMLInputElement["files"] | null) => {
