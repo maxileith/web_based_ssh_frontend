@@ -7,7 +7,7 @@ import {
     Theme,
     Typography,
 } from "@material-ui/core";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Headbar from "../../components/Headbar/Headbar";
 import API from "../../Api";
 import LoadingIndicator from "../../components/LoadingIndicator/LoadingIndicator";
@@ -34,6 +34,7 @@ interface IRegister {
     setAuth(bool: boolean): void;
 }
 
+// verify email
 const Verify = ({ match }: any, { setAuth }: IRegister) => {
     const token = match.params.token;
     const [sucess, setSucess] = useState(false);
@@ -41,8 +42,9 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
     const classes = useStyles();
     const history = useHistory();
 
+    // send token to server to verify
     useEffect(() => {
-        API.get(`auth/email/verify/${token}`, { withCredentials: true })
+        API.get(`auth/email/verify/${token}`)
             .then((res) => {
                 if (res.status === 200) {
                     setSucess(true);
@@ -54,6 +56,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
             });
     }, []);
 
+    // return loading indicator while loading, otherwise return success / failure
     if (loading) {
         return (
             <>
@@ -85,7 +88,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
                                 align="center"
                                 gutterBottom
                             >
-                                Sie wurden erfolgreich verifiziert!
+                                You verified successfully!
                             </Typography>
                         </Grid>
                         <Grid item>
@@ -94,7 +97,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
                                 color="primary"
                                 onClick={() => history.push("/login")}
                             >
-                                Zum Login
+                                Got to Login
                             </Button>
                         </Grid>
                     </Grid>
@@ -123,7 +126,7 @@ const Verify = ({ match }: any, { setAuth }: IRegister) => {
                                 align="center"
                                 gutterBottom
                             >
-                                Verifikation fehlgeschlagen!
+                                Verification failed!
                             </Typography>
                         </Grid>
                     </Grid>

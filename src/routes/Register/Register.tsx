@@ -1,9 +1,8 @@
-import { Button, Container, makeStyles, TextField } from "@material-ui/core";
-import { ChangeEvent, FormEvent, Fragment, useState } from "react";
+import { AppBar, Button, Container, CssBaseline, makeStyles, TextField, Toolbar, Typography, useScrollTrigger } from "@material-ui/core";
+import React, { ChangeEvent, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import API from "../../Api";
-import Headbar from "../../components/Headbar/Headbar";
 
 const useStyles = makeStyles((theme) => ({
     submit: {
@@ -11,11 +10,13 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-interface IRegister {
-    setAuth(bool: boolean): void;
+
+interface Props {
+    children: React.ReactElement;
 }
 
-const Register = ({ setAuth }: IRegister) => {
+// component to register as a new user
+const Register = (props: any) => {
     const [inputs, setInputs] = useState({
         first_name: "",
         last_name: "",
@@ -23,6 +24,8 @@ const Register = ({ setAuth }: IRegister) => {
         username: "",
         password: "",
     });
+
+    const [disable, setDisable] = useState(false);
 
     const history = useHistory();
     const classes = useStyles();
@@ -37,19 +40,26 @@ const Register = ({ setAuth }: IRegister) => {
 
     const onSubmitForm = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const body = { first_name, last_name, email, password, username };
-        console.log(body);
+        // disbale register button while waiting for response
+        setDisable(true);
 
-        API.post("auth/register", body)
+        const body = { first_name, last_name, email, password, username };
+
+        API.post("auth/register/", body)
             .then((res) => {
-                if (res.data.token) {
-                    //localStorage.setItem('token', res.data.token);
-                    history.push("/login");
+                if (res.data && res.data.message) {
+                    toast.success(res.data.message);
                 }
+                history.push("/login");
             })
             .catch((err) => {
-                if (err.response && err.response.status === 401) {
-                    toast.error(err.response.data);
+                setDisable(false);
+                if (
+                    err.response &&
+                    err.response.data &&
+                    err.response.data.message
+                ) {
+                    toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
                     console.error(err.message);
@@ -57,9 +67,32 @@ const Register = ({ setAuth }: IRegister) => {
             });
     };
 
+    // custom headbar with no burgermenu
+    function ElevationScroll(props: Props) {
+        const { children } = props;
+        const trigger = useScrollTrigger({
+            disableHysteresis: true,
+            threshold: 0,
+        });
+
+        return React.cloneElement(children, {
+            elevation: trigger ? 4 : 0,
+        });
+    }
+
     return (
         <>
-            <Headbar setAuth={setAuth} />
+            <CssBaseline />
+            <ElevationScroll>
+                <AppBar>
+                    <Toolbar>
+                        <Typography variant="h6">
+                            Web Based SSH Client
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+            </ElevationScroll>
+            <Toolbar style={{ marginBottom: "16px" }} />
             <Container>
                 <Fragment>
                     <h1>Register</h1>
@@ -129,6 +162,7 @@ const Register = ({ setAuth }: IRegister) => {
                             variant="contained"
                             color="primary"
                             className={classes.submit}
+                            disabled={disable}
                         >
                             Register
                         </Button>

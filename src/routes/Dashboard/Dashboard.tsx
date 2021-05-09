@@ -13,6 +13,7 @@ interface IDashboard {
     setAuth(bool: boolean): void;
 }
 
+// entrypoint of application. Displays all Saved Sessions
 export default function Dashboard(props: IDashboard) {
     const [edit, setEdit] = useState(false);
     const [savedSessions, setSavedSessions] = useState<any>({
@@ -39,33 +40,40 @@ export default function Dashboard(props: IDashboard) {
     const updateSession = (index: number, session: ISessionInfo) => {
         let updatedSavedSessions = savedSessions.sessions;
         updatedSavedSessions[index] = session;
-        console.log(updatedSavedSessions);
         setSavedSessions({ sessions: updatedSavedSessions });
     };
 
     const deleteSession = (index: number) => {
         let updatedSavedSessions = savedSessions.sessions;
         updatedSavedSessions.splice(index, 1);
-        console.log(updatedSavedSessions);
         setSavedSessions({ sessions: updatedSavedSessions });
     };
 
     useEffect(() => {
-        API.get("saved_sessions/", { withCredentials: true })
+        // get all sessions of a user
+        API.get("saved_sessions/")
             .then((data) => {
                 setSavedSessions({ sessions: data.data["sessions"] });
-                console.log(data.data["sessions"]);
+                // save sessions locally to minimize api calls
+                localStorage.setItem("sessions", JSON.stringify(data.data["sessions"]));
             })
             .catch((err) => {
-                if (err.response && err.response.data) {
+                if (
+                    err.response &&
+                    err.response.data &&
+                    err.response.status === 404
+                ) {
+                    toast.warning(err.response.data.message);
+                } else if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
+                    console.error(err.message);
                 }
-                console.error(err.message);
             });
     }, []);
 
+    // mapping the sessions into sessionCards
     return (
         <Fragment>
             <Headbar setAuth={props.setAuth} />
@@ -102,118 +110,6 @@ export default function Dashboard(props: IDashboard) {
                     direction="row"
                     justify="flex-start"
                 >
-                    {/*savedSessions.map((server: IServerInfo) => (
-                        <Grid item xs={12} sm={6} md={4} key={server.id}>
-                            <Card className={classes.fullHeight}>
-                                <CardActionArea
-                                    className={classes.fullHeight}
-                                    onClick={() =>
-                                        history.push(`/client/${server.id}`)
-                                    }
-                                >
-                                    <CardContent className={classes.fullHeight}>
-                                        <Typography
-                                            gutterBottom
-                                            variant="h5"
-                                            component="h2"
-                                        >
-                                            {server.title}
-                                        </Typography>
-                                        <Typography gutterBottom>
-                                            Hostname: {server.hostname}, User:{" "}
-                                            {server.username}
-                                        </Typography>
-                                        <Typography
-                                            variant="body2"
-                                            color="textSecondary"
-                                            component="p"
-                                        >
-                                            {server.description}
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                            </Card>
-                        </Grid>
-                    ))}
-                    {[...new Array(5)].map((now, index) => {
-                        return (
-                            <Grid item xs={12} sm={6} md={4} key={index}>
-                                <Card className={classes.fullHeight}>
-                                    <CardActionArea
-                                        className={classes.fullHeight}
-                                        onClick={() =>
-                                            history.push(`/client/${index}`)
-                                        }
-                                    >
-                                        <CardContent
-                                            className={classes.fullHeight}
-                                        >
-                                            <Typography
-                                                gutterBottom
-                                                variant="h5"
-                                                component="h2"
-                                            >
-                                                Servername
-                                            </Typography>
-                                            <Typography gutterBottom>
-                                                Hostname:
-                                                traefik.webssh.leith.de, User:
-                                                root
-                                            </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                color="textSecondary"
-                                                component="p"
-                                            >
-                                                Eine fancy Beschreibung, was auf
-                                                deinem super geilem Server grade
-                                                läuft
-                                            </Typography>
-                                        </CardContent>
-                                    </CardActionArea>
-                                </Card>
-                            </Grid>
-                        );
-                    })}
-                    <Grid item xs={12} sm={6} md={4} key={123}>
-                        <Card>
-                            <CardActionArea
-                                onClick={() => history.push(`/client/234`)}
-                            >
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="h5"
-                                        component="h2"
-                                    >
-                                        Servername
-                                    </Typography>
-                                    <Typography gutterBottom>
-                                        Hostname: 8.8.8.8, User: root
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        color="textSecondary"
-                                        component="p"
-                                    >
-                                        Eine fancy Beschreibung, was auf deinem
-                                        super geilem Server grade läuft Eine
-                                        fancy Beschreibung, was auf deinem super
-                                        geilem Server grade läuft Eine fancy
-                                        Beschreibung, was auf deinem super
-                                        geilem Server grade läuft Eine fancy
-                                        Beschreibung, was auf deinem super
-                                        geilem Server grade läuft Eine fancy
-                                        Beschreibung, was auf deinem super
-                                        geilem Server grade läuft Eine fancy
-                                        Beschreibung, was auf deinem super
-                                        geilem Server grade läuft
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                        </Card>
-                    </Grid>
-                    */}
                     {savedSessions.sessions.map(
                         (session: ISessionInfo, index: number) => (
                             <SessionCard
@@ -224,6 +120,7 @@ export default function Dashboard(props: IDashboard) {
                                     updateSession(index, session)
                                 }
                                 delete={() => deleteSession(index)}
+                                key={session.id}
                             />
                         )
                     )}

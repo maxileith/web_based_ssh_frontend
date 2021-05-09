@@ -13,7 +13,7 @@ import {
     Theme,
     Typography,
 } from "@material-ui/core";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useHistory } from "react-router";
 import DeleteIcon from "@material-ui/icons/Delete";
 import CreateIcon from "@material-ui/icons/Create";
@@ -27,14 +27,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
     deleteCard: {
         "&:hover": {
-            border: "2px solid #ff1744",
+            border: "2px solid #bf616a",
             margin: "-2px",
         },
         height: "100%",
     },
     editCard: {
         "&:hover": {
-            border: "2px solid #2196f3",
+            border: "2px solid #5e81ac",
             margin: "-2px",
         },
         height: "100%",
@@ -48,6 +48,7 @@ export interface ISessionInfo {
     username: String;
     description: String;
     port: number;
+    key_file: boolean;
 }
 
 interface ISessionCard {
@@ -58,36 +59,44 @@ interface ISessionCard {
     delete: () => void;
 }
 
+
+// Sessioncards displayed in dashboard. Containing the delete and config modals
 const SessionCard = (props: ISessionCard) => {
     const classes = useStyles();
     const history = useHistory();
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     const ChangeOpenEdit = (bool: boolean) => {
         setOpenEdit(bool);
     };
 
+    // removes session from database
     const removeSession = (sessionId: number) => {
+        setDisable(true);
         API.delete("saved_sessions/details/" + sessionId, {
             withCredentials: true,
         })
             .then((res) => {
                 toast.success(res.data.message);
+                // removes session from dashboard with no refresh
                 props.delete();
                 setOpenDelete(false);
             })
             .catch((err) => {
+                setDisable(false);
                 if (err.response && err.response.data) {
                     toast.error(err.response.data.message);
                 } else {
                     toast.error(err.message);
+                    console.error(err.message);
                 }
-                console.error(err.message);
                 setOpenDelete(false);
             });
     };
 
+    // determine style, Icon and OnClick based on selected mode in dashboard (normal, edit, delete)
     const determineStyle = () => {
         if (props.edit) return classes.editCard;
 
@@ -125,9 +134,8 @@ const SessionCard = (props: ISessionCard) => {
         }
     };
 
+    // pathing for the config-modal to the dashboard
     const updateSession = (session: ISessionInfo) => {
-        console.log("---");
-        console.log(session);
         props.update(session);
     };
 
@@ -193,6 +201,7 @@ const SessionCard = (props: ISessionCard) => {
                             variant="contained"
                             color="primary"
                             onClick={() => removeSession(props.session.id)}
+                            disabled={disable}
                         >
                             Remove
                         </Button>

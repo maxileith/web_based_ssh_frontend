@@ -1,6 +1,7 @@
 import { CircularProgress, Grid } from '@material-ui/core';
-import React, { Fragment } from 'react';
+import { Fragment } from 'react';
 
+//basic loadingindicator
 export default function LoadingIndicator() {
   return (
     <Fragment>
