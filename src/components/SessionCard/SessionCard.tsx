@@ -59,7 +59,6 @@ interface ISessionCard {
     delete: () => void;
 }
 
-
 // Sessioncards displayed in dashboard. Containing the delete and config modals
 const SessionCard = (props: ISessionCard) => {
     const classes = useStyles();

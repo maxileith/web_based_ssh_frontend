@@ -60,7 +60,7 @@ export default function CustomizedMenus({ setAuth }: IUserMenu) {
             })
             .catch(() => {
                 toast.error("Logout failed!");
-            })
+            });
         setAuth(false);
     };
 

@@ -18,7 +18,7 @@ import AddIcon from "@material-ui/icons/Add";
 import API from "../../Api";
 import { toast } from "react-toastify";
 import { ISessionInfo } from "../SessionCard/ConfigSessionModal";
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 const useStyles = makeStyles((theme) => ({
     absolute: {
@@ -104,10 +104,14 @@ const AddSession = (props: IAddSession) => {
                 props.addSession(res.data.details);
                 if (keyFile) {
                     const formData = new FormData();
-                    formData.append('key_file', keyFile);
-                    API.post(`saved_sessions/details/${res.data.details.id}/key`, formData, {
-                        headers: { 'Content-Type': 'multipart/form-data', }
-                    })
+                    formData.append("key_file", keyFile);
+                    API.post(
+                        `saved_sessions/details/${res.data.details.id}/key`,
+                        formData,
+                        {
+                            headers: { "Content-Type": "multipart/form-data" },
+                        }
+                    )
                         .then((res) => {
                             toast.success("Key file uploaded successfully");
                         })
@@ -140,13 +144,13 @@ const AddSession = (props: IAddSession) => {
             setDisablePassword(true);
             setDisableUpload(true);
         }
-    }
+    };
 
     const removeKeyFile = () => {
         setKeyFile(null);
         setDisablePassword(false);
         setDisableUpload(false);
-    }
+    };
 
     return (
         <>
@@ -232,34 +236,37 @@ const AddSession = (props: IAddSession) => {
                             </Grid>
                             <Grid item xs={12}>
                                 <input
-                                    style={{ display: 'none' }}
+                                    style={{ display: "none" }}
                                     id="raised-button-file"
                                     type="file"
                                     onChange={(e) => uploadFile(e.target.files)}
                                     disabled={disableUpload}
                                 />
                                 <label htmlFor="raised-button-file">
-                                    <Button variant="contained" component="span" color="primary" disabled={disableUpload} >
+                                    <Button
+                                        variant="contained"
+                                        component="span"
+                                        color="primary"
+                                        disabled={disableUpload}
+                                    >
                                         Upload Key File
                                     </Button>
                                 </label>
                             </Grid>
-                            {
-                                keyFile ? (
-                                    <>
-                                        <Grid item>
-                                            <Typography>
-                                                {keyFile.name}
-                                            </Typography>
-                                        </Grid>
-                                        <Grid item>
-                                            <IconButton onClick={removeKeyFile}>
-                                                <HighlightOffIcon color="secondary" />
-                                            </IconButton>
-                                        </Grid>
-                                    </>
-                                ) : ""
-                            }
+                            {keyFile ? (
+                                <>
+                                    <Grid item>
+                                        <Typography>{keyFile.name}</Typography>
+                                    </Grid>
+                                    <Grid item>
+                                        <IconButton onClick={removeKeyFile}>
+                                            <HighlightOffIcon color="secondary" />
+                                        </IconButton>
+                                    </Grid>
+                                </>
+                            ) : (
+                                ""
+                            )}
                         </Grid>
                     </DialogContent>
                     <DialogTitle>Details</DialogTitle>
@@ -313,7 +320,11 @@ const AddSession = (props: IAddSession) => {
                         <Button onClick={refreshModal} color="primary">
                             Cancel
                         </Button>
-                        <Button type="submit" color="primary" disabled={disable}>
+                        <Button
+                            type="submit"
+                            color="primary"
+                            disabled={disable}
+                        >
                             Add
                         </Button>
                     </DialogActions>

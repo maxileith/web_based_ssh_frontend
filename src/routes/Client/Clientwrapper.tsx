@@ -38,7 +38,7 @@ export default function ClientWrapper(props: IClient) {
         sizes = [6, 6, 6, 6];
     }
 
-    // add client to view 
+    // add client to view
     const addClientId = (id: number) => {
         if (clientCount < 4) {
             setClientIds([

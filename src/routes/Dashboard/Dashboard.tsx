@@ -55,7 +55,10 @@ export default function Dashboard(props: IDashboard) {
             .then((data) => {
                 setSavedSessions({ sessions: data.data["sessions"] });
                 // save sessions locally to minimize api calls
-                localStorage.setItem("sessions", JSON.stringify(data.data["sessions"]));
+                localStorage.setItem(
+                    "sessions",
+                    JSON.stringify(data.data["sessions"])
+                );
             })
             .catch((err) => {
                 if (

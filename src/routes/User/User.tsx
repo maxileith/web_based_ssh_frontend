@@ -100,7 +100,7 @@ export default function Client({ setAuth }: ISetAuth) {
         const body = {
             content: sshInput,
         };
-        API.put("/known_hosts/", body, { withCredentials: true })
+        API.put("/known_hosts/", body)
             .then(() => {
                 toast.success("Saved known hosts.");
                 setSshKeys(sshInput);

@@ -15,15 +15,15 @@ import Register from "./routes/Register/Register";
 import API from "./Api";
 import Verify from "./routes/Verify/Verify";
 import User from "./routes/User/User";
-import ClientWrapper from "./routes/Client/Clientwrapper"
+import ClientWrapper from "./routes/Client/Clientwrapper";
 
 const theme = createMuiTheme({
     palette: {
         primary: {
-            main: '#5e81ac',
+            main: "#5e81ac",
         },
         secondary: {
-            main: '#bf616a',
+            main: "#bf616a",
         },
     },
 });
@@ -43,7 +43,7 @@ function App() {
 
     // always starts with a verify of user and the routes based on that
     useEffect(() => {
-        API.get("auth/verify/", { withCredentials: true })
+        API.get("auth/verify/")
             .then((res) => {
                 setIsAuthenticated(res.data.success);
                 setLoading(false);
@@ -105,7 +105,10 @@ function App() {
                             path="/client/:id"
                             render={(props) =>
                                 isAuthenticated ? (
-                                    <ClientWrapper {...props} setAuth={setAuth} />
+                                    <ClientWrapper
+                                        {...props}
+                                        setAuth={setAuth}
+                                    />
                                 ) : (
                                     <Redirect to="/login" />
                                 )
