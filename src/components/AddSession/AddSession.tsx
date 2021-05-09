@@ -173,7 +173,7 @@ const AddSession = (props: IAddSession) => {
             </Tooltip>
             <Dialog
                 open={open}
-                onClose={handleClose}
+                onClose={refreshModal}
                 aria-labelledby="form-dialog-title"
             >
                 <form onSubmit={(e) => addSession(e)}>

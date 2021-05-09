@@ -142,6 +142,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
             )
                 .then((res) => {
                     toast.success(res.data.message);
+                    updateKeyFile(newSession);
                 })
                 .catch((err) => {
                     if (err.response && err.response.data) {
@@ -150,13 +151,16 @@ export default function ConfigSessionModal(props: IConfigModal) {
                         toast.error(err.message);
                         console.error(err.message);
                     }
-                    return;
+                    setDisable(false);
                 });
             // Add api-call to update informations
         } else {
             toast.success("No changes to apply.");
+            updateKeyFile(newSession);
         }
+    };
 
+    const updateKeyFile = (newSession: any) => {
         // Upload key file if needed
         if (keyFile) {
             const formData = new FormData();
@@ -240,7 +244,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
     };
 
     return (
-        <Dialog open={props.open} onClose={handleClose}>
+        <Dialog open={props.open} onClose={resetInputs}>
             <form onSubmit={(e) => updateServerInformations(e)}>
                 <DialogTitle>
                     {title ? title : "Edit Session Details"}
@@ -389,6 +393,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                                 onChange={(e) => onChange(e)}
                                 value={title}
                                 fullWidth
+                                required
                             />
                         </Grid>
                         <Grid item xs={12}>
