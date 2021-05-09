@@ -1,9 +1,8 @@
-import { Button, Container, makeStyles, TextField } from "@material-ui/core";
-import { ChangeEvent, FormEvent, Fragment, useState } from "react";
+import { AppBar, Button, Container, CssBaseline, makeStyles, TextField, Toolbar, Typography, useScrollTrigger } from "@material-ui/core";
+import React, { ChangeEvent, FormEvent, Fragment, useState } from "react";
 import { useHistory } from "react-router";
 import { toast } from "react-toastify";
 import API from "../../Api";
-import Headbar from "../../components/Headbar/Headbar";
 
 const useStyles = makeStyles((theme) => ({
     submit: {
@@ -13,6 +12,10 @@ const useStyles = makeStyles((theme) => ({
 
 interface IRegister {
     setAuth(bool: boolean): void;
+}
+
+interface Props {
+    children: React.ReactElement;
 }
 
 const Register = ({ setAuth }: IRegister) => {
@@ -65,9 +68,32 @@ const Register = ({ setAuth }: IRegister) => {
             });
     };
 
+
+    function ElevationScroll(props: Props) {
+        const { children } = props;
+        const trigger = useScrollTrigger({
+            disableHysteresis: true,
+            threshold: 0,
+        });
+
+        return React.cloneElement(children, {
+            elevation: trigger ? 4 : 0,
+        });
+    }
+
     return (
         <>
-            <Headbar setAuth={setAuth} />
+            <CssBaseline />
+            <ElevationScroll>
+                <AppBar>
+                    <Toolbar>
+                        <Typography variant="h6">
+                            Web Based SSH Client
+                        </Typography>
+                    </Toolbar>
+                </AppBar>
+            </ElevationScroll>
+            <Toolbar style={{ marginBottom: "16px" }} />
             <Container>
                 <Fragment>
                     <h1>Register</h1>
