@@ -67,11 +67,19 @@ export default function ConfigSessionModal(props: IConfigModal) {
     const onChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-        setInputs({ ...inputs, [e.target.id]: e.target.value });
+        let additionalChanges = {};
+        if (e.target.id === "hostname" && hostname === title) {
+            additionalChanges = { title: e.target.value };
+        }
+        setInputs({
+            ...inputs,
+            ...additionalChanges,
+            [e.target.id]: e.target.value,
+        });
     };
 
     // set inputs back to session infos
-    const refreshModal = () => {
+    const resetInputs = () => {
         setInputs({
             id: props.session.id,
             hostname: props.session.hostname,
@@ -81,13 +89,19 @@ export default function ConfigSessionModal(props: IConfigModal) {
             title: props.session.title,
             port: props.session.port,
         });
+        resetCredentials(props.session);
         handleClose();
-        setDisablePassword(props.session.key_file);
+    };
+
+    // resets credential related inputs
+    const resetCredentials = (src: ISessionInfo) => {
+        setDisablePassword(src.key_file);
         setKeyFile(null);
         setDisableUpload(false);
-        setDisableChangePasswordBox(props.session.key_file);
-        setDisableDeleteKeyFile(!props.session.key_file);
+        setDisableChangePasswordBox(src.key_file);
+        setDisableDeleteKeyFile(!src.key_file);
         setDeleteKeyFile(false);
+        setChangePassword(false);
     };
 
     const handlePasswordChange = () => {
@@ -119,15 +133,14 @@ export default function ConfigSessionModal(props: IConfigModal) {
             newInformations = { ...newInformations, password: password };
         }
         // if information has changed, send changes to server
+        let newSession: any = { ...inputs, key_file: props.session.key_file };
         if (Object.keys(newInformations).length > 0) {
-            let newSession: any = inputs;
             delete newSession.password;
             API.patch(
                 `/saved_sessions/details/${props.session.id}`,
                 newInformations
             )
                 .then((res) => {
-                    props.update(newSession);
                     toast.success(res.data.message);
                     setDisable(false);
                 })
@@ -139,12 +152,15 @@ export default function ConfigSessionModal(props: IConfigModal) {
                         toast.error(err.message);
                         console.error(err.message);
                     }
+                    return;
                 });
             // Add api-call to update informations
         } else {
             setDisable(false);
             toast.success("No changes to apply.");
         }
+
+        // Upload key file if needed
         if (keyFile) {
             const formData = new FormData();
             formData.append("key_file", keyFile);
@@ -152,26 +168,41 @@ export default function ConfigSessionModal(props: IConfigModal) {
                 `saved_sessions/details/${props.session.id}/key`,
                 formData,
                 {
-                    headers: { "Content-Type": "multipart/form-data" },
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
                 }
             )
                 .then(() => {
                     toast.success("Key file uploaded successfully");
+                    newSession["key_file"] = true;
+                    props.update(newSession);
                 })
                 .catch(() => {
                     toast.error("Could not upload key file");
+                    props.update(newSession);
                 });
+            // Delete key file if needed
         } else if (deleteKeyFile) {
             API.delete(`saved_sessions/details/${props.session.id}/key`)
                 .then(() => {
                     toast.success("Deleted key file!");
+                    newSession["key_file"] = false;
+                    props.update(newSession);
                 })
                 .catch(() => {
                     toast.error("Could not delete key file.");
+                    props.update(newSession);
                 });
+        } else {
+            props.update(newSession);
         }
-        refreshModal();
-        props.setOpen(false);
+
+        // timout makes sure that key_file is updated properly
+        setTimeout(() => {
+            resetCredentials(newSession);
+        }, 200);
+        handleClose();
     };
 
     const uploadFile = (files: HTMLInputElement["files"] | null) => {
@@ -209,7 +240,9 @@ export default function ConfigSessionModal(props: IConfigModal) {
     return (
         <Dialog open={props.open} onClose={handleClose}>
             <form onSubmit={(e) => updateServerInformations(e)}>
-                <DialogTitle>Edit Session Details</DialogTitle>
+                <DialogTitle>
+                    {title ? title : "Edit Session Details"}
+                </DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         Provide the following information to identify the host
@@ -245,6 +278,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                                 value={port}
                                 fullWidth
                                 required
+                                inputProps={{ min: 1, max: 65535 }}
                             />
                         </Grid>
                         <Grid item xs={12} sm={6}>
@@ -346,7 +380,6 @@ export default function ConfigSessionModal(props: IConfigModal) {
                     >
                         <Grid item xs={12}>
                             <TextField
-                                autoFocus
                                 margin="dense"
                                 id="title"
                                 label="Title"
@@ -370,7 +403,7 @@ export default function ConfigSessionModal(props: IConfigModal) {
                     </Grid>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={refreshModal} color="primary">
+                    <Button onClick={resetInputs} color="primary">
                         Cancel
                     </Button>
                     <Button type="submit" color="primary" disabled={disable}>

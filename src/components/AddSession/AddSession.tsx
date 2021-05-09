@@ -68,14 +68,21 @@ const AddSession = (props: IAddSession) => {
     const onChange = (
         e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
+        let additionalChanges = {};
         if (e.target.id === "password") {
             if (e.target.value === "") {
                 setDisableUpload(false);
             } else {
                 setDisableUpload(true);
             }
+        } else if (e.target.id === "hostname" && hostname === title) {
+            additionalChanges = { title: e.target.value };
         }
-        setInputs({ ...inputs, [e.target.id]: e.target.value });
+        setInputs({
+            ...inputs,
+            ...additionalChanges,
+            [e.target.id]: e.target.value,
+        });
     };
 
     // set inputs to default
@@ -171,7 +178,7 @@ const AddSession = (props: IAddSession) => {
             >
                 <form onSubmit={(e) => addSession(e)}>
                     <DialogTitle id="form-dialog-title">
-                        Add Session
+                        {title ? title : "Add Session"}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText className={classes.dialogText}>
@@ -208,6 +215,7 @@ const AddSession = (props: IAddSession) => {
                                     value={port}
                                     fullWidth
                                     required
+                                    inputProps={{ min: 1, max: 65535 }}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
@@ -284,7 +292,6 @@ const AddSession = (props: IAddSession) => {
                         >
                             <Grid item xs={12}>
                                 <TextField
-                                    autoFocus
                                     margin="dense"
                                     id="title"
                                     label="Title"
