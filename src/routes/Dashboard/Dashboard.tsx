@@ -34,6 +34,10 @@ export default function Dashboard(props: IDashboard) {
     const addSession = (session: ISessionInfo) => {
         let newSavedSessions = savedSessions.sessions;
         newSavedSessions.push(session);
+        localStorage.setItem(
+            "sessions",
+            JSON.stringify(newSavedSessions)
+        );
         setSavedSessions({ sessions: newSavedSessions });
     };
 
